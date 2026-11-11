@@ -1,13 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- A television whose picture is a ranked list: the accent bar is rank 1. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="48dp"
     android:height="48dp"
     android:viewportWidth="48"
     android:viewportHeight="48">
     <path
-        android:fillColor="#1B1B22"
+        android:fillColor="#14161D"
         android:pathData="M0,0h48v48h-48z" />
     <path
-        android:fillColor="#E50914"
-        android:pathData="M8,10h32v9h-32zM8,21h24v9h-24zM8,32h16v9h-16z" />
+        android:fillColor="#0B0D12"
+        android:pathData="M6,9h36v23h-36z" />
+    <path
+        android:fillColor="#FFB020"
+        android:pathData="M10,13h25v4h-25z" />
+    <path
+        android:fillColor="#E8EAF0"
+        android:pathData="M10,20h17v4h-17z" />
+    <path
+        android:fillColor="#868FA3"
+        android:pathData="M10,26h11v4h-11z" />
+    <path
+        android:fillColor="#2E3440"
+        android:pathData="M22,32h5v3h-5z" />
+    <path
+        android:fillColor="#3A4150"
+        android:pathData="M15,36h18v3h-18z" />
 </vector>
