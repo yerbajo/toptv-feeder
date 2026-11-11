@@ -481,7 +481,10 @@ public final class Feeder {
         long channelId = upsertChannel(context, pkg, row);
         Uri programs = TvContract.PreviewPrograms.CONTENT_URI;
 
-        for (int i = 0; i < row.items.size(); i++) {
+        // Inserted back to front: some launchers order a channel by insertion and
+        // show the newest row first, so rank 1 must be the last card written to be
+        // the first one drawn.
+        for (int i = row.items.size() - 1; i >= 0; i--) {
             Item item = row.items.get(i);
             ContentValues values = new ContentValues();
             values.put(TvContract.PreviewPrograms.COLUMN_CHANNEL_ID, channelId);
@@ -491,7 +494,8 @@ public final class Feeder {
             values.put(TvContract.PreviewPrograms.COLUMN_THUMBNAIL_URI, emptyToNull(item.thumb));
             values.put(TvContract.PreviewPrograms.COLUMN_INTENT_URI, item.intent);
             values.put(TvContract.PreviewPrograms.COLUMN_SHORT_DESCRIPTION, row.title);
-            values.put(TvContract.PreviewPrograms.COLUMN_WEIGHT, i);
+            // A larger weight is a higher priority, for launchers that honour it.
+            values.put(TvContract.PreviewPrograms.COLUMN_WEIGHT, row.items.size() - i);
             // 1 so that other launchers can read the row: TvProvider only widens
             // READ_TV_LISTINGS queries to rows with searchable=1.
             values.put(COL_SEARCHABLE, 1);
@@ -504,7 +508,9 @@ public final class Feeder {
         Uri programs = TvContract.WatchNextPrograms.CONTENT_URI;
 
         long now = System.currentTimeMillis();
-        for (int i = 0; i < row.items.size(); i++) {
+        // Back to front for the same reason as the preview cards: rank 1 is the last
+        // row written, so a launcher that sorts by insertion draws it first.
+        for (int i = row.items.size() - 1; i >= 0; i--) {
             Item item = row.items.get(i);
             ContentValues values = new ContentValues();
             values.put(TvContract.WatchNextPrograms.COLUMN_CONTENT_ID, row.key());

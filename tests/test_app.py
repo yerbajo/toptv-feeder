@@ -49,6 +49,22 @@ def test_never_passes_a_selection():
     )
 
 
+def test_cards_are_written_back_to_front():
+    # Projectivy orders a channel by insertion and draws the newest card first, so
+    # writing rank 1 first made the row open on the last title of the ranking. Both
+    # publish loops therefore run backwards and the weight still encodes the rank for
+    # launchers that honour COLUMN_WEIGHT.
+    loops = [ln.strip() for ln in FEEDER.splitlines()
+             if "for (int i = row.items.size() - 1; i >= 0; i--)" in ln]
+    assert len(loops) == 2, (
+        "every publish loop must write the cards back to front, found "
+        f"{len(loops)} of them"
+    )
+    assert "COLUMN_WEIGHT, row.items.size() - i" in FEEDER, (
+        "the preview weight must keep rank 1 at the highest value"
+    )
+
+
 def main():
     tests = [(n, f) for n, f in sorted(globals().items()) if n.startswith("test_")]
     failed = 0
