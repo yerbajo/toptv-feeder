@@ -22,6 +22,10 @@ optional external source (see *Legacy: an external top.json*).
 | Netflix · Top películas España | this feeder | the same site's Spain Top 10 page (`MOVIES`) |
 | Prime Video · Top series / películas España | this feeder | JustWatch popular titles, Prime Video included, country ES |
 
+The rows are published in ranking order: rank 1 goes in last and carries the
+largest preview weight, so the row opens on rank 1; a launcher that honours neither
+insertion order nor weight may still reorder the cards.
+
 Prime Video publishes no per-country ranking of its own, so the Prime rows use
 JustWatch: a GraphQL `popularTitles` query scoped to `country: ES` and to the
 packages that are **included** with the subscription (`prv`, and `pva` for the
@@ -64,6 +68,8 @@ which is 33 MB and 521,000 lines: the box rejected it on the body cap, and holdi
 that body in a TV heap once a day is not an option. Each page entity already
 carries rank, week, title, artwork and video id, so nothing has to be joined
 across downloads (S4).
+
+Setup on a real TV, stick or box, with screenshots: [install.md](install.md).
 
 ### Install without ADB, from the TV itself
 

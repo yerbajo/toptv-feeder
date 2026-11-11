@@ -23,6 +23,10 @@ externo*).
 | Netflix · Top películas España | este feeder | la página Top 10 de España del mismo sitio (`MOVIES`) |
 | Prime Video · Top series / películas España | este feeder | títulos populares de JustWatch, con Prime Video incluido, país ES |
 
+Las filas se publican en orden de ranking: el puesto 1 entra el último y lleva el
+mayor peso de vista previa, así que la fila se abre por el puesto 1; un lanzador que
+no respete ni el orden de inserción ni el peso puede reordenar las tarjetas.
+
 Prime Video no publica ningún ranking propio por país, así que las filas de Prime
 usan JustWatch: una consulta GraphQL `popularTitles` limitada a `country: ES` y a
 los paquetes que están **incluidos** en la suscripción (`prv`, y `pva` para el plan
@@ -68,6 +72,8 @@ Netflix, que pesa 33 MB y tiene 521.000 líneas: la caja lo rechazó por el lím
 cuerpo, y mantener ese cuerpo en el heap de un televisor una vez al día no es una
 opción. Cada entidad de la página ya lleva ranking, semana, título, carátula e id de
 vídeo, así que no hay que unir nada entre descargas (S4).
+
+Instalación en un televisor, stick o caja reales, con capturas: [install.es.md](install.es.md).
 
 ### Instalar sin ADB, desde el propio televisor
 

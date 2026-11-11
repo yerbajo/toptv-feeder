@@ -67,6 +67,8 @@ Le document est mis en cache dans `files/last_good.json`, dans le répertoire de
 données privé de l'application : une actualisation qui échoue laisse donc en place
 les rangées que vous voyez déjà.
 
+Installation pas à pas sur un appareil réel, avec captures : [install.fr.md](docs/install.fr.md).
+
 ## Quand la synchronisation a lieu
 
 | Déclencheur | Moment |

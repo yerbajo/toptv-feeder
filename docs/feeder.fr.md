@@ -24,6 +24,11 @@ top.json externe*).
 | Netflix · Top películas España | ce feeder | la page Top 10 Espagne du même site (`MOVIES`) |
 | Prime Video · Top series / películas España | ce feeder | les titres populaires de JustWatch, Prime Video compris, pays ES |
 
+Les rangées sont publiées dans l'ordre du classement : le rang 1 est inséré en
+dernier et porte le poids d'aperçu le plus élevé, donc la rangée s'ouvre sur le rang
+1 ; un lanceur qui ne respecte ni l'ordre d'insertion ni le poids peut encore
+réordonner les cartes.
+
 Prime Video ne publie aucun classement propre à un pays, donc les rangées Prime
 utilisent JustWatch : une requête GraphQL `popularTitles` limitée à `country: ES`
 et aux offres **comprises** dans l'abonnement (`prv`, et `pva` pour l'offre avec
@@ -71,6 +76,8 @@ plafond de taille, et garder ce corps dans le tas mémoire d'un téléviseur une
 par jour n'est pas envisageable. Chaque entité de page porte déjà le rang, la
 semaine, le titre, l'affiche et l'id de vidéo, donc rien n'a besoin d'être joint
 entre plusieurs téléchargements (S4).
+
+Installation sur un téléviseur, une clé ou un boîtier réel, avec captures : [install.fr.md](install.fr.md).
 
 ### Installer sans ADB, depuis le téléviseur lui-même
 

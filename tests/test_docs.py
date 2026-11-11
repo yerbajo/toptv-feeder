@@ -10,8 +10,10 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 # "" is the English original; the other three are translations of it.
 LANGS = ("", ".es", ".fr", ".de")
-FAMILIES = ("README{}.md", "docs/feeder{}.md")
+FAMILIES = ("README{}.md", "docs/feeder{}.md", "docs/install{}.md")
 LINK = re.compile(r"\[[^\]]*\]\(([^()\s]+)\)")
+IMAGE = re.compile(r"!\[[^\]]*\]\((img/[^()\s]+)\)")
+SCREENSHOTS = {"img/app-sync.jpg", "img/launcher-home.jpg", "img/launcher-rows.jpg"}
 
 
 def files(template):
@@ -90,6 +92,18 @@ def test_switcher_targets_exist():
                 assert (path.parent / target).is_file(), (
                     f"{rel(path)} links {target}, which does not exist"
                 )
+
+
+def test_install_screenshots_exist():
+    for path in files("docs/install{}.md"):
+        refs = IMAGE.findall(text(path))
+        assert set(refs) == SCREENSHOTS, (
+            f"{rel(path)} embeds {sorted(refs)}, expected {sorted(SCREENSHOTS)}"
+        )
+        for ref in refs:
+            assert (path.parent / ref).is_file(), (
+                f"{rel(path)} embeds {ref}, which does not exist"
+            )
 
 
 def test_translations_keep_the_code_blocks():

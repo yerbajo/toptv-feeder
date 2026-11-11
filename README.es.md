@@ -64,6 +64,8 @@ El documento se guarda en caché en `files/last_good.json`, dentro del directori
 privado de datos de la aplicación, de modo que una actualización fallida deja
 intactas las filas que ya ves.
 
+Instalación paso a paso en un dispositivo real, con capturas: [install.es.md](docs/install.es.md).
+
 ## Cuándo sincroniza
 
 | Disparador | Momento |

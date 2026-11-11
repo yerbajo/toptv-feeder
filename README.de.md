@@ -67,6 +67,8 @@ Das Dokument wird in `files/last_good.json` im privaten Datenverzeichnis der App
 zwischengespeichert, sodass eine fehlgeschlagene Aktualisierung die bereits
 sichtbaren Zeilen stehen lässt.
 
+Schrittweise Einrichtung auf einem echten Gerät, mit Screenshots: [install.de.md](docs/install.de.md).
+
 ## Wann synchronisiert wird
 
 | Auslöser | Zeitpunkt |

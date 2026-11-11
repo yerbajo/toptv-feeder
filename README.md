@@ -62,6 +62,8 @@ for the file manager on the TV, and install it from there.
 The document is cached in `files/last_good.json` inside the app's private data
 directory, so a refresh that fails leaves the rows you already see in place.
 
+Step-by-step device setup with screenshots: [install.md](docs/install.md).
+
 ## When it syncs
 
 | Trigger | When |
