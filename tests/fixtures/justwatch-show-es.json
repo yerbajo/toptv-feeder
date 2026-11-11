@@ -1,0 +1,80 @@
+{
+ "data": {
+  "popularTitles": {
+   "edges": [
+    {
+     "node": {
+      "content": {
+       "title": "Tierra de mafiosos",
+       "posterUrl": "/poster/355511816/{profile}/mobland.{format}"
+      },
+      "offers": [
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.6c164b71-8ceb-4b19-957f-79a1b6c5c4a8",
+        "package": {
+         "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.6c164b71-8ceb-4b19-957f-79a1b6c5c4a8",
+        "package": {
+         "shortName": "prv"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "node": {
+      "content": {
+       "title": "Carrie",
+       "posterUrl": "/poster/350899399/{profile}/carrie.{format}"
+      },
+      "offers": [
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.66ebe2ae-822e-489e-a61b-df0daa550051",
+        "package": {
+         "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.66ebe2ae-822e-489e-a61b-df0daa550051",
+        "package": {
+         "shortName": "prv"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "node": {
+      "content": {
+       "title": "La Lista Final",
+       "posterUrl": "/poster/317532028/{profile}/the-terminal-list.{format}"
+      },
+      "offers": [
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.0c17249c-bd78-474d-9fe7-91edf9b71dfa",
+        "package": {
+         "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.0c17249c-bd78-474d-9fe7-91edf9b71dfa",
+        "package": {
+         "shortName": "prv"
+        }
+       }
+      ]
+     }
+    }
+   ]
+  }
+ }
+}

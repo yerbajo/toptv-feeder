@@ -1,0 +1,80 @@
+{
+ "data": {
+  "popularTitles": {
+   "edges": [
+    {
+     "node": {
+      "content": {
+       "title": "Proyecto Salvación",
+       "posterUrl": "/poster/332605837/{profile}/proyecto-salvacion.{format}"
+      },
+      "offers": [
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.414eb1af-ee27-476c-bc46-bedd48595f59",
+        "package": {
+         "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.414eb1af-ee27-476c-bc46-bedd48595f59",
+        "package": {
+         "shortName": "prv"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "node": {
+      "content": {
+       "title": "Normal",
+       "posterUrl": "/poster/345751629/{profile}/normal-2026.{format}"
+      },
+      "offers": [
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "package": {
+         "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "package": {
+         "shortName": "prv"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "node": {
+      "content": {
+       "title": "El amor de tu vida",
+       "posterUrl": "/poster/354522082/{profile}/love-of-your-life.{format}"
+      },
+      "offers": [
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.29845417-9251-4fda-917c-02e65cb4d7a0",
+        "package": {
+         "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.29845417-9251-4fda-917c-02e65cb4d7a0",
+        "package": {
+         "shortName": "prv"
+        }
+       }
+      ]
+     }
+    }
+   ]
+  }
+ }
+}

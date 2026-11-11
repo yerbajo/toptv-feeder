@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TV Feeder</string>
+    <string name="url_hint">Optional: external top.json URL (empty = built-in sources)</string>
+    <string name="sync">Sync</string>
+    <string name="diagnose">Diagnostics</string>
+    <string name="target_preview">Destination: recommendation channels</string>
+    <string name="target_watch_next">Destination: Watch Next</string>
+    <string name="status_idle">No sync yet.</string>
+    <string name="status_running">Sync started…</string>
+    <string name="listings_denied">READ_TV_LISTINGS denied: cannot read TV provider rows.</string>
+    <string name="diagnostics_reading">Reading provider rows…</string>
+</resources>

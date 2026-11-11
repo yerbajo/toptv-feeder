@@ -1,0 +1,6 @@
+*.apk
+app/build/
+__pycache__/
+*.pyc
+backups/
+share/
