@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TV Feeder</string>
+    <string name="url_hint">Opcional: URL externa de top.json (vacío = fuentes integradas)</string>
+    <string name="sync">Sincronizar</string>
+    <string name="diagnose">Diagnóstico</string>
+    <string name="target_preview">Destino: canales de recomendación</string>
+    <string name="target_watch_next">Destino: Continuar viendo</string>
+    <string name="status_idle">Todavía no hay sincronización.</string>
+    <string name="status_running">Sincronización iniciada…</string>
+    <string name="listings_denied">READ_TV_LISTINGS denegado: no se pueden leer las filas del proveedor.</string>
+    <string name="diagnostics_reading">Leyendo filas del proveedor…</string>
+
+    <!-- Idioma: el del televisor, o uno elegido aquí. -->
+    <string name="language">Idioma: %1$s</string>
+    <string name="language_system">el del televisor</string>
+    <string name="language_en">English</string>
+    <string name="language_es">Español</string>
+
+    <!-- Informe de diagnóstico. -->
+    <string name="diagnostics_header">Filas del proveedor (package_name | display_name | type | searchable)</string>
+    <string name="diagnostics_rows">%1$d filas; esta app es %2$s</string>
+    <string name="diagnostics_failed">La consulta falló: %1$s</string>
+    <string name="diagnostics_items_header">Elementos por canal</string>
+    <string name="diagnostics_channel">%1$s (%2$s): %3$d elementos</string>
+    <string name="diagnostics_watch_next">%1$d elementos watch_next en total</string>
+
+    <!-- Informe de sincronización. La línea de cada fila se arma por partes. -->
+    <string name="report_published">Publicadas %1$d filas, %2$d elementos, %3$d sin carátula, %4$d errores</string>
+    <string name="report_nothing">No se publicó nada: %1$d filas, %2$d elementos, %3$d sin carátula, %4$d errores (las filas anteriores siguen intactas, S5)</string>
+    <string name="report_source">Origen: %1$s</string>
+    <string name="report_source_cached">%1$s (copia guardada)</string>
+    <string name="report_items_count">%1$d elementos</string>
+    <string name="report_week">semana %1$s</string>
+    <string name="report_no_artwork">%1$d sin carátula</string>
+    <string name="report_no_link">%1$d sin enlace que abra la app</string>
+    <string name="report_opens">  abre: %1$s</string>
+    <string name="report_notice">  aviso: %1$s</string>
+    <string name="report_row_error">- error %1$s: %2$s</string>
+    <string name="report_no_valid_rows">No se publicó nada: ninguna fila válida</string>
+    <string name="report_previous_kept">Las filas anteriores siguen intactas (S5).</string>
+    <string name="report_refresh_failed">Fallo al actualizar %1$s: %2$s</string>
+    <string name="report_no_cache">Todavía no hay copia guardada.</string>
+    <string name="report_cache_at">Última copia buena guardada el %1$s (retenida, sin republicar).</string>
+    <string name="report_cache_unreadable">La copia guardada no se puede leer.</string>
+    <string name="report_cached_copy">Se recuperó la copia guardada.</string>
+</resources>

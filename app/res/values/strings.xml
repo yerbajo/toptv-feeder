@@ -10,4 +10,38 @@
     <string name="status_running">Sync started…</string>
     <string name="listings_denied">READ_TV_LISTINGS denied: cannot read TV provider rows.</string>
     <string name="diagnostics_reading">Reading provider rows…</string>
+
+    <!-- Language: follow the box, or pick one here. -->
+    <string name="language">Language: %1$s</string>
+    <string name="language_system">the TV\'s own</string>
+    <string name="language_en">English</string>
+    <string name="language_es">Español</string>
+
+    <!-- Diagnostics report. -->
+    <string name="diagnostics_header">Provider rows (package_name | display_name | type | searchable)</string>
+    <string name="diagnostics_rows">%1$d rows; this app is %2$s</string>
+    <string name="diagnostics_failed">Query failed: %1$s</string>
+    <string name="diagnostics_items_header">Items per channel</string>
+    <string name="diagnostics_channel">%1$s (%2$s): %3$d items</string>
+    <string name="diagnostics_watch_next">%1$d watch_next items in total</string>
+
+    <!-- Sync report. The row line is built from parts, joined with commas. -->
+    <string name="report_published">Published %1$d rows, %2$d items, %3$d without artwork, %4$d errors</string>
+    <string name="report_nothing">Nothing published: %1$d rows, %2$d items, %3$d without artwork, %4$d errors (previous rows left untouched, S5)</string>
+    <string name="report_source">Source: %1$s</string>
+    <string name="report_source_cached">%1$s (cached copy)</string>
+    <string name="report_items_count">%1$d items</string>
+    <string name="report_week">week %1$s</string>
+    <string name="report_no_artwork">%1$d without artwork</string>
+    <string name="report_no_link">%1$d without a resolvable link</string>
+    <string name="report_opens">  opens: %1$s</string>
+    <string name="report_notice">  notice: %1$s</string>
+    <string name="report_row_error">- error %1$s: %2$s</string>
+    <string name="report_no_valid_rows">Nothing published: no valid rows</string>
+    <string name="report_previous_kept">Previous rows left untouched (S5).</string>
+    <string name="report_refresh_failed">FAILED refresh of %1$s: %2$s</string>
+    <string name="report_no_cache">No cached copy yet.</string>
+    <string name="report_cache_at">Last good copy cached at %1$s (held back, not republished).</string>
+    <string name="report_cache_unreadable">The cached copy is unreadable.</string>
+    <string name="report_cached_copy">Recovered the cached copy.</string>
 </resources>

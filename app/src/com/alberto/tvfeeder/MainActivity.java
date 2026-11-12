@@ -2,6 +2,7 @@ package com.alberto.tvfeeder;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -30,6 +31,7 @@ public final class MainActivity extends Activity {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private EditText urlView;
     private Button targetView;
+    private Button languageView;
     private TextView statusView;
     private TextView reportView;
     private long polledRun;
@@ -47,6 +49,12 @@ public final class MainActivity extends Activity {
             handler.postDelayed(this, POLL_MS);
         }
     };
+
+    /** Applies the stored language before any resource is read. */
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(AppLocale.wrap(base));
+    }
 
     @Override
     protected void onCreate(Bundle saved) {
@@ -83,6 +91,20 @@ public final class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 startDiagnostics();
+            }
+        });
+
+        languageView = (Button) findViewById(R.id.language);
+        showLanguage();
+        languageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Keep whatever is typed in the URL field across the rebuild.
+                Feeder.prefs(MainActivity.this).edit()
+                        .putString(Feeder.PREF_URL, urlView.getText().toString().trim()).apply();
+                AppLocale.next(MainActivity.this);
+                // Rebuild the screen so every label is read in the new language.
+                recreate();
             }
         });
 
@@ -145,6 +167,10 @@ public final class MainActivity extends Activity {
         targetView.setText(watchNext ? R.string.target_watch_next : R.string.target_preview);
     }
 
+    private void showLanguage() {
+        languageView.setText(getString(R.string.language, getString(AppLocale.label(this))));
+    }
+
     private void refresh() {
         SharedPreferences prefs = Feeder.prefs(this);
         String status = prefs.getString(Feeder.PREF_STATUS, null);
@@ -158,7 +184,7 @@ public final class MainActivity extends Activity {
 
     private String diagnostics() {
         ContentResolver resolver = getContentResolver();
-        StringBuilder out = new StringBuilder("Provider rows (package_name | display_name | type | searchable)\n");
+        StringBuilder out = new StringBuilder(getString(R.string.diagnostics_header)).append('\n');
         Map<String, String> channelNames = new LinkedHashMap<>();
         Cursor cursor = null;
         try {
@@ -174,9 +200,9 @@ public final class MainActivity extends Activity {
                         .append(cursor.getString(3)).append(" | ")
                         .append(cursor.getInt(4)).append('\n');
             }
-            out.append(rows).append(" rows; this app is ").append(getPackageName());
+            out.append(getString(R.string.diagnostics_rows, rows, getPackageName()));
         } catch (RuntimeException error) {
-            out.append("Query failed: ").append(error);
+            out.append(getString(R.string.diagnostics_failed, error.toString()));
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -184,7 +210,7 @@ public final class MainActivity extends Activity {
         }
         // A channel with no items renders as an empty row, so the count is what
         // tells an empty row apart from a missing one.
-        out.append("\nItems per channel\n");
+        out.append('\n').append(getString(R.string.diagnostics_items_header)).append('\n');
         Map<String, Integer> counts = new LinkedHashMap<>();
         Cursor programs = null;
         try {
@@ -196,7 +222,7 @@ public final class MainActivity extends Activity {
                 counts.put(id, seen == null ? 1 : seen + 1);
             }
         } catch (RuntimeException error) {
-            out.append("Query failed: ").append(error).append('\n');
+            out.append(getString(R.string.diagnostics_failed, error.toString())).append('\n');
         } finally {
             if (programs != null) {
                 programs.close();
@@ -204,10 +230,10 @@ public final class MainActivity extends Activity {
         }
         for (Map.Entry<String, String> channel : channelNames.entrySet()) {
             Integer seen = counts.get(channel.getKey());
-            out.append(channel.getValue()).append(" (" ).append(channel.getKey()).append("): ")
-                    .append(seen == null ? 0 : seen).append(" items\n");
+            out.append(getString(R.string.diagnostics_channel,
+                    channel.getValue(), channel.getKey(), seen == null ? 0 : seen)).append('\n');
         }
-        out.append(watchNextCount(resolver)).append(" watch_next items in total");
+        out.append(getString(R.string.diagnostics_watch_next, watchNextCount(resolver)));
         return out.toString();
     }
 

@@ -12,6 +12,7 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.media.tv.TvContract;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -223,8 +224,9 @@ public final class Feeder {
      * provider and the second one already has nothing left to do.
      */
     private static Report offline(Context context, String source, Exception error) {
-        StringBuilder text = new StringBuilder("FAILED refresh of ").append(source)
-                .append(": ").append(error.getMessage()).append('\n')
+        StringBuilder text = new StringBuilder(
+                context.getString(R.string.report_refresh_failed, source, error.getMessage()))
+                .append('\n')
                 .append(cacheNote(context));
         String cached = TopSource.recover(readCache(context),
                 prefs(context).getBoolean(PREF_PUBLISHED, false));
@@ -233,18 +235,21 @@ public final class Feeder {
             try {
                 rows = parse(cached);
             } catch (JSONException unreadable) {
-                text.append("\nThe cached copy is unreadable.");
+                text.append('\n').append(context.getString(R.string.report_cache_unreadable));
             }
         }
         if (rows == null) {
-            return new Report(false,
-                    text + "\nNothing published, previous rows left untouched (S5).");
+            return new Report(false, text + "\n"
+                    + context.getString(R.string.report_no_valid_rows) + "\n"
+                    + context.getString(R.string.report_previous_kept));
         }
-        Report recovered = publish(context, rows, source + " (cached copy)");
+        Report recovered = publish(context, rows,
+                context.getString(R.string.report_source_cached, source));
         if (recovered.ok) {
             prefs(context).edit().putBoolean(PREF_PUBLISHED, true).apply();
         }
-        return new Report(recovered.ok, text + "\nRecovered the cached copy.\n" + recovered.text);
+        return new Report(recovered.ok,
+                text + "\n" + context.getString(R.string.report_cached_copy) + "\n" + recovered.text);
     }
 
     static void storeReport(Context context, Report report) {
@@ -333,10 +338,10 @@ public final class Feeder {
     private static String cacheNote(Context context) {
         File cache = new File(context.getFilesDir(), CACHE_FILE);
         if (!cache.exists()) {
-            return "No cached copy yet.";
+            return context.getString(R.string.report_no_cache);
         }
         String stamp = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(new Date(cache.lastModified()));
-        return "Last good copy cached at " + stamp + " (held back, not republished).";
+        return context.getString(R.string.report_cache_at, stamp);
     }
 
     // ------------------------------------------------------------------- parse
@@ -420,14 +425,15 @@ public final class Feeder {
                 publishable.add(row);
             } else {
                 errors++;
-                text.append("- error ").append(row.channelId.isEmpty() ? "?" : row.channelId)
-                        .append(": ").append(problem).append('\n');
+                text.append(context.getString(R.string.report_row_error,
+                        row.channelId.isEmpty() ? "?" : row.channelId, problem)).append('\n');
             }
         }
         if (publishable.isEmpty()) {
             // S5: never clear the previous rows without something to put in their place.
-            return new Report(false, "Nothing published: no valid rows\nSource: " + source + "\n"
-                    + text + "Previous rows left untouched (S5).");
+            return new Report(false, context.getString(R.string.report_no_valid_rows) + "\n"
+                    + context.getString(R.string.report_source, source) + "\n"
+                    + text + context.getString(R.string.report_previous_kept));
         }
         clearOwnPrograms(resolver);
 
@@ -442,38 +448,39 @@ public final class Feeder {
                 published++;
                 items += row.items.size();
                 degraded += row.degraded;
-                text.append("- ").append(label).append(": ").append(row.items.size()).append(" items");
+                List<String> parts = new ArrayList<String>();
+                parts.add(context.getString(R.string.report_items_count, row.items.size()));
                 if (!row.week.isEmpty()) {
-                    text.append(", week ").append(row.week);
+                    parts.add(context.getString(R.string.report_week, row.week));
                 }
                 if (row.degraded > 0) {
-                    text.append(", ").append(row.degraded).append(" without artwork");
+                    parts.add(context.getString(R.string.report_no_artwork, row.degraded));
                 }
                 if (row.unresolved > 0) {
-                    text.append(", ").append(row.unresolved).append(" without a resolvable link");
+                    parts.add(context.getString(R.string.report_no_link, row.unresolved));
                 }
-                text.append('\n');
+                text.append("- ").append(label).append(": ")
+                        .append(TextUtils.join(", ", parts)).append('\n');
                 // The first card's URI: what a launcher will parse and fire.
-                text.append("  opens: ").append(row.items.get(0).intent).append('\n');
+                text.append(context.getString(R.string.report_opens, row.items.get(0).intent))
+                        .append('\n');
                 for (String notice : row.notices) {
-                    text.append("  notice: ").append(notice).append('\n');
+                    text.append(context.getString(R.string.report_notice, notice)).append('\n');
                 }
             } catch (RuntimeException error) {
                 errors++;
-                text.append("- error ").append(label).append(": ").append(error).append('\n');
+                text.append(context.getString(R.string.report_row_error, label, error.toString()))
+                        .append('\n');
                 Log.w(TAG, "publish failed for " + label, error);
             }
         }
 
         boolean ok = published > 0;
-        StringBuilder head = new StringBuilder();
-        head.append(ok ? "Published " : "Nothing published: ");
-        head.append(published).append(" rows, ").append(items).append(" items, ")
-                .append(degraded).append(" without artwork, ").append(errors).append(" errors");
-        if (!ok) {
-            head.append(" (previous rows left untouched, S5)");
-        }
-        return new Report(ok, head + "\n" + "Source: " + source + "\n" + text);
+        String head = context.getString(
+                ok ? R.string.report_published : R.string.report_nothing,
+                published, items, degraded, errors);
+        return new Report(ok, head + "\n" + context.getString(R.string.report_source, source)
+                + "\n" + text);
     }
 
     private static void publishPreview(Context context, String pkg, Row row) {

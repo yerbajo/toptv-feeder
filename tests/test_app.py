@@ -65,6 +65,31 @@ def test_cards_are_written_back_to_front():
     )
 
 
+def test_keystore_survives_a_clean_build():
+    # app/build is wiped between builds; a key stored there is recreated and the
+    # new APK can no longer upgrade the copy installed on the TV.
+    script = (HERE.parent / "tools" / "build-apk.sh").read_text(encoding="utf-8")
+    line = next((ln for ln in script.splitlines() if ln.startswith("KEYSTORE=")), "")
+    assert line, "build-apk.sh does not set KEYSTORE"
+    assert '"$BUILD' not in line, f"the keystore lives in the disposable build dir: {line}"
+
+
+def test_every_language_defines_the_same_strings():
+    # A key missing from values-es/ silently falls back to English on a Spanish TV.
+    def keys(path):
+        return set(re.findall(r'<string name="([^"]+)"', path.read_text(encoding="utf-8")))
+
+    base = keys(APP / "res" / "values" / "strings.xml")
+    for lang in sorted(p.name for p in (APP / "res").iterdir() if p.name.startswith("values")):
+        if lang == "values":
+            continue
+        other = keys(APP / "res" / lang / "strings.xml")
+        assert other == base, (
+            f"res/{lang}/strings.xml differs from res/values: "
+            f"missing {sorted(base - other)}, unexpected {sorted(other - base)}"
+        )
+
+
 def main():
     tests = [(n, f) for n, f in sorted(globals().items()) if n.startswith("test_")]
     failed = 0

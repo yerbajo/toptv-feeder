@@ -50,8 +50,10 @@ public final class SyncJobService extends JobService {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                // The stored report is written in the language the screen shows.
+                Context context = AppLocale.wrap(SyncJobService.this);
                 try {
-                    Feeder.storeReport(SyncJobService.this, Feeder.sync(SyncJobService.this));
+                    Feeder.storeReport(context, Feeder.sync(context));
                 } finally {
                     jobFinished(params, false);
                 }
