@@ -18,16 +18,42 @@ optional external source (see *Legacy: an external top.json*).
 | Row | Producer | Source |
 |---|---|---|
 | Seguir viendo | Netflix / Prime Video themselves | their own Watch Next programs, untouched by this project |
-| Netflix · Top series España | this feeder | the Netflix Tudum Spain Top 10 page (`SERIES`), country ES |
-| Netflix · Top películas España | this feeder | the same site's Spain Top 10 page (`MOVIES`) |
-| Prime Video · Top series / películas España | this feeder | JustWatch popular titles, Prime Video included, country ES |
+| Netflix · Top series *country* | this feeder | the Netflix Tudum Top 10 series page of the selected country (`SERIES`) |
+| Netflix · Top películas *country* | this feeder | the same site's film page of that country (`MOVIES`) |
+| Prime Video · Top series *country* | this feeder | JustWatch popular titles, Prime Video included, `country: <ISO code>` |
+| Prime Video · Top películas *country* | this feeder | the same JustWatch query, Prime Video included, `country: <ISO code>` |
+| Disney+ · Top series *country* | this app | JustWatch with the `dnp` package, offers included with the subscription |
+| Disney+ · Top películas *country* | this app | JustWatch with the `dnp` package, offers included with the subscription |
+| Max · Top series *country* | this app | JustWatch with the `mxx` package, offers included with the subscription |
+| Max · Top películas *country* | this app | JustWatch with the `mxx` package, offers included with the subscription |
+| Apple TV · Top series *country* | this app | Apple's own series chart of the storefront |
+| Apple TV · Top películas *country* | this app | Apple's own film chart of the storefront |
+| Movistar+ · Top series *country* | this app | JustWatch with the `mvs` package; the link is http and the app accepts http and https |
+| Movistar+ · Top películas *country* | this app | JustWatch with the `mvs` package; the link is http and the app accepts http and https |
+| SkyShowtime · Top series *country* | this app | JustWatch with the `sst` package, offers included with the subscription |
+| SkyShowtime · Top películas *country* | this app | JustWatch with the `sst` package, offers included with the subscription |
+| Filmin · Top series *country* | this app | JustWatch with the `fil` package, offers included with the subscription; its TV app claims only its own hosts, so the card opens Filmin, not the title |
+| Filmin · Top películas *country* | this app | JustWatch with the `fil` package, offers included with the subscription; its TV app claims only its own hosts, so the card opens Filmin, not the title |
+
+Every card is resolved on the device before it is published: the platform app's deep
+link first, then the app itself, then the platform's web page in the television's browser,
+then the app's store page. A card with no destination at all is dropped and counted, so a
+TV that lacks one of these apps still shows the ranking instead of an empty row.
+
+
+One country at a time, and its name is in every row title, in the language of the
+screen: `Netflix · Top series Alemania` on a Spanish screen with Germany selected,
+`Netflix · Top series Germany` on an English one. The channel ids carry the country
+code (`netflix-top-series-de`, `prime-top-films-de`), so two countries never share a
+row. The examples in this guide are Spain (`netflix-top-series-es`).
 
 The rows are published in ranking order: rank 1 goes in last and carries the
 largest preview weight, so the row opens on rank 1; a launcher that honours neither
 insertion order nor weight may still reorder the cards.
 
 Prime Video publishes no per-country ranking of its own, so the Prime rows use
-JustWatch: a GraphQL `popularTitles` query scoped to `country: ES` and to the
+JustWatch: a GraphQL `popularTitles` query scoped to the selected country
+(`country: <ISO code>`) and to the
 packages that are **included** with the subscription (`prv`, and `pva` for the
 ad-supported tier). Rentals are excluded by filtering on `prv`: JustWatch's
 `amz` is the store and `amp` the whole Amazon group, and both leak rentals into
@@ -59,8 +85,9 @@ app shows per country; and the official Android TV APK installed on the box is a
 
 The JustWatch path is covered by offline checks against **captured** responses
 (trimmed to three titles and to the Prime offers), plus an assertion that a
-failing endpoint produces a notice instead of rows. On the box a failing source
-aborts the whole refresh instead, which is the stricter of the two.
+failing endpoint produces a notice instead of rows. On the box the two sources are
+independent: a source that fails or comes back empty is named in the report and the
+other rows are published anyway.
 
 ```bash
 python3 tools/fetch_top.py --out top.json      # same rows, built on a PC
@@ -75,8 +102,9 @@ The box needs no PC and no URL:
 3. Leave the URL field **empty**, press **Sync** and accept the
    `READ_TV_LISTINGS` dialog.
 
-The app fetches the two Netflix Spain Top 10 pages and the two JustWatch queries
-over HTTPS, builds the document, replaces the cached copy and publishes the rows.
+The app fetches the two Netflix Tudum Top 10 pages of the selected country and the
+two JustWatch queries for it over HTTPS, builds the document, replaces the cached
+copy and publishes the rows.
 The boot run and the daily job repeat it without the screen open. An install with
 no network at all still recovers the cached copy (see *Autonomous mode*).
 
@@ -108,9 +136,9 @@ so an updated box starts autonomous by itself.
 
 | Question | Answer |
 |---|---|
-| Where does the document live? | `files/last_good.json` in the app's private data dir, unreachable by other apps and by `adb` without root |
-| When is it replaced? | Only after the freshly built document parsed; it is written to `last_good.json.tmp`, fsynced and renamed, so a crash never leaves half a file |
-| What if a source fails? | The whole refresh fails. Four rows or none: the report names the failing source and the published rows stay as they are |
+| Where does the document live? | `files/last_good-<cc>.json` in the app's private data dir, unreachable by other apps and by `adb` without root |
+| When is it replaced? | Only after the freshly built document parsed; it is written to `last_good-<cc>.json.tmp`, fsynced and renamed, so a crash never leaves half a file |
+| What if a source fails? | Only that source's rows are left out: the report names it and the other rows are published, so a country where JustWatch is thin may publish only the Netflix rows. When nothing can be published, the previous rows stay as they are |
 | What if the box is offline? | Nothing is published and the rows you see stay. The cache is republished only on a **cold start** (nothing published since the app data was created), so a daily offline run never churns the provider |
 | What is a Netflix card built from? | One page entity: rank, week, title, poster and video id all come from the same payload, so a page that updates late cannot mismatch them. The 33 MB world-wide dataset is never fetched |
 | How is the table chosen? | The **Destination** button on the activity toggles recommendation channels / Watch Next and syncs immediately; it replaced swapping the URL |
@@ -124,13 +152,10 @@ Course". On the box the page wins, because it is the only naming the box can
 read; `tests/test_autonomous_feeder.py` records that single allowed difference and
 fails if any other title drifts.
 
-A failing source is named in the report, for example:
-
-```
-FAILED refresh of on-box sources (Netflix Tudum + JustWatch ES): HTTP 503 from https://apis.justwatch.com/graphql
-Last good copy cached at 2026-11-11 18:20 (held back, not republished).
-Nothing published, previous rows left untouched (S5).
-```
+A source that fails or comes back empty is named in the report, and the rows of the
+other one are published anyway: a country where JustWatch has no titles still gets
+the two Netflix rows, and a Tudum failure still leaves the Prime rows. When nothing
+at all can be published, the previous rows stay on the launcher untouched.
 
 ## Language
 
@@ -146,6 +171,55 @@ Only English and Spanish ship, so a TV set to any other language gets English.
 Android 9 has no per-app language API: the choice is applied by handing the
 activity and the sync path a context whose configuration carries that locale, and
 the screen is rebuilt when the button is pressed.
+
+## Country
+
+The app collects the rankings of **one country**, also chosen on the activity. The
+default comes from the TV: the country of its locale when the app supports it, and
+Spain otherwise. The **Country** button shows the current choice (`Country: Spain`,
+and `País: Alemania` on a Spanish screen) and opens a list of the supported
+countries:
+
+Spain (ES), Germany (DE), Netherlands (NL), France (FR), Italy (IT), United
+Kingdom (GB), United States (US), Portugal (PT), Belgium (BE), Austria (AT),
+Switzerland (CH), Sweden (SE), Poland (PL), Ireland (IE), Mexico (MX), Brazil (BR)
+and Argentina (AR).
+
+The choice is stored like the language and survives reboots, and it decides
+everything that is per country: the two Tudum pages (`/tudum/top10/<slug>/tv` for
+series and `/tudum/top10/<slug>` for films), the `country` and the `language` of
+the JustWatch query, the channel ids (`netflix-top-series-de`) and the row titles,
+which carry the country name in the screen's language: "Netflix · Top series
+Alemania" on a Spanish screen, "Netflix · Top series Germany" on an English one.
+Switching country or language deletes the channels this package owns that the new
+document does not contain, so the launcher does not keep an empty row from the
+previous country; no other package's channels are touched.
+
+## Platforms and where each row comes from
+
+| Platform | Source of the ranking | JustWatch package | App the card targets | Link host the app claims |
+|---|---|---|---|---|
+| Netflix | its own Tudum Top 10 pages | — | `com.netflix.ninja` | `www.netflix.com` |
+| Prime Video | JustWatch popularity | `prv` | `com.amazon.amazonvideo.livingroom` | `app.primevideo.com` |
+| Disney+ | JustWatch popularity | `dnp` | `com.disney.disneyplus` | `disneyplus.com`, `www.disneyplus.com` |
+| Max | JustWatch popularity | `mxx` | `com.wbd.stream` | `play.max.com`, `play.hbomax.com` |
+| Movistar+ | JustWatch popularity | `mvs` | `es.plus.yomvi` | `wl.movistarplus.es` (http and https) |
+| SkyShowtime | JustWatch popularity | `sst` | `com.skyshowtime.skyshowtime.google` | any https URL (no host in its filter) |
+| Filmin | JustWatch popularity | `fil` | `com.filmin.androidtv` | `androidtv.filmin.com`, `vf.filmin.es` |
+| Apple TV | Apple's own store chart | — | `com.apple.atve.androidtv.appletv` | `tv.apple.com` |
+
+Three different claims live in that table, and the guide states them instead of blurring
+them. The Netflix rows are Netflix's own published Top 10. The Apple rows are Apple's own
+store chart, which can contain titles you buy or rent rather than stream. Everything else
+is JustWatch popularity restricted to titles included with that service, which is what the
+Prime rows have always been.
+
+The link hosts come from each vendor APK's own intent filters, not from guesswork. Filmin
+is the one exception worth knowing: its TV app registers only its own deeplink hosts, so a
+`filmin.es` page does not match by data and its card opens the Filmin app itself.
+
+Adding a platform is one entry in `JUSTWATCH_PLATFORMS` in both generators: label, app
+package, the package names the query asks for and the ones accepted as a link.
 
 ## Why the top cards did not open their apps
 
@@ -202,6 +276,11 @@ The generator sets `target` for every row with `--target preview|watch_next`
 (default `preview`), so a document can drive either table. On the box the same
 knob is the **Destination** button, which needs no rebuild and no PC.
 
+The example above is Spain. `channelId` and `title` are per country:
+`netflix-top-series-es` carries `"Netflix · Top series España"` for Spain, and
+`netflix-top-series-de` carries `"Netflix · Top series Alemania"` on a Spanish
+screen for Germany, so two countries never share a channel.
+
 `target` selects the provider table and is the one knob worth understanding:
 
 - `preview` (default) — a `TYPE_PREVIEW` channel plus preview programs. This is
@@ -237,9 +316,8 @@ TVFEEDER_JSON_JAR=/path/json-20240303.jar python3 tests/test_autonomous_feeder.p
 
 The jar is Maven Central `org.json:json:20240303`, used for the host run only:
 production code takes `org.json` from the platform, exactly as before. This
-proves the page payload parsing, the parent-show titles, the all-or-nothing
-abort and the document shape, and it fails if the app starts fetching the
-world-wide dataset again (S4). It does **not** prove that Netflix or JustWatch
+proves the page payload parsing, the parent-show titles and the document shape,
+and it fails if the app starts fetching the world-wide dataset again (S4). It does **not** prove that Netflix or JustWatch
 answer an Android client, and the card resolution in `Feeder` needs the box (see
 *Limits*).
 
@@ -302,13 +380,18 @@ adb shell am start -a android.intent.action.VIEW \
   all if neither resolves. The title rides along as an `S.title` extra so the ten
   cards of one app keep distinct URIs and a launcher does not merge them.
 - The autonomous fetch runs on the job thread with 20 s connect/read timeouts per
-  request, five requests, all or nothing. It never runs on the UI thread.
+  request, five requests. A failing source no longer fails the sync: it is named in
+  the report and the other rows publish. It never runs on the UI thread.
 - Reading *another* package's rows needs `android.permission.READ_TV_LISTINGS`
   (`dangerous`, granted at runtime) **and** the row must have `searchable=1`,
   which is why the feeder marks its own channels and programs that way.
 - Deleting and re-publishing happens in one pass at the start of each sync, and
   only when at least one row is valid, so a failed download never wipes the
   rows you already see.
+- Changing the country or the language republishes under new channel ids, so the
+  channels this package owns that the new document does not contain are deleted:
+  no empty row from the previous country stays on the launcher, and no other
+  package's channels are touched.
 
 ## Limits
 
@@ -333,9 +416,9 @@ adb shell am start -a android.intent.action.VIEW \
   published rows untouched, which is the specified behaviour (L15).
 - The Python generator needs `curl` because netflix.com resets HTTP/1.1 requests
   from scripted clients. The box uses `HttpURLConnection`, so if Netflix resets
-  it the same way, the report shows `FAILED refresh of on-box sources …: …` and
-  the previous rows stay. The external top.json mode is then the fallback until
-  the transport works.
+  it the same way, the report names that source and the Prime rows still publish;
+  when nothing at all publishes, the previous rows stay. The external top.json
+  mode is then the fallback until the transport works.
 - `targetSdkVersion 28` blocks cleartext HTTP by default, so the manifest has to
   set `android:usesCleartextTraffic="true"` for the external mode; without it
   every sync fails with `IOException: Cleartext HTTP traffic to ... not

@@ -82,6 +82,9 @@ Source: on-box sources (Netflix Tudum + JustWatch ES)
 
 ![The activity after a sync, in the TV's language](img/app-sync.jpg)
 
+`JustWatch ES` is the code of the selected country: another country changes that
+code, the row titles and the pages the app reads.
+
 The numbers mean:
 
 | Value | Meaning |
@@ -104,6 +107,18 @@ other language gets English.
 
 On a Spanish screen the buttons read `Sincronizar`, `Diagnóstico`, `Destino` and
 `Idioma`, so the steps above name the button, not its label.
+
+### The screen country
+
+The **Country** button shows the current choice and opens the list of supported
+countries: Spain, Germany, Netherlands, France, Italy, United Kingdom, United
+States, Portugal, Belgium, Austria, Switzerland, Sweden, Poland, Ireland, Mexico,
+Brazil and Argentina. The app starts with the country of the TV's locale when it is
+in that list, and with Spain otherwise. The choice is stored like the language, and
+the row titles carry the country name in the screen's language: a Spanish screen
+with Germany selected shows `Netflix · Top series Alemania`, an English one shows
+`Netflix · Top series Germany`. Switching country or language removes this app's
+older rows, so no empty row from the previous country stays behind.
 
 ## 6. Show the rows
 
@@ -131,9 +146,11 @@ press **Sync** again afterwards, because switching clears the other table.
 
 ## 7. Daily life
 
-The app syncs at boot, every 24 hours and when you press **Sync**. A refresh that
-fails keeps the rows already published and the report says so: the previous rows
-are not cleared and the last good document stays in `files/last_good.json`.
+The app syncs at boot, every 24 hours and when you press **Sync**. A source that
+fails or comes back empty is named in the report and the other rows are published
+anyway, so a country where JustWatch is thin may publish only the Netflix rows;
+when nothing at all can be published, the rows already on the launcher stay and the
+last good document stays in `files/last_good-<cc>.json`.
 
 ## 8. Troubleshooting
 
@@ -141,7 +158,7 @@ are not cleared and the last good document stays in `files/last_good.json`.
 |---|---|---|
 | No rows at all | the launcher hides the channels, or **Destination** targets the other table | enable the launcher's own channels (Projectivy: `Categorías / Canales → Habilitar canales`), or switch **Destination** and press **Sync** |
 | The report is OK but cards do nothing | the target app is missing, or the card was dropped because its link did not resolve on the device | install Netflix or Prime Video; the report counts dropped cards as `N without a resolvable link` |
-| `FAILED refresh of on-box sources …` | no HTTPS route to `www.netflix.com` or `apis.justwatch.com`; transient edge outages happen | nothing to repair in the app: the old rows stay published. Retry later with **Sync** |
+| `FAILED refresh of on-box sources …` | no HTTPS route to `www.netflix.com` or `apis.justwatch.com`; transient edge outages happen | nothing to repair in the app: the report names the source and the other rows still publish, and when nothing publishes the old rows stay. Retry later with **Sync** |
 | **Diagnostics** shows 0 items per channel | the channels exist but the programs did not publish, or the table in view is the other **Destination** | run **Sync** with the **Destination** the launcher shows, then read **Diagnostics** again |
 | `SecurityException` or a cleartext error in the report | `READ_TV_LISTINGS` was not granted, or the external top.json URL is plain `http` | grant the dialog on the next sync; for the optional external URL use `https` where possible |
 

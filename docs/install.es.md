@@ -82,6 +82,9 @@ Source: on-box sources (Netflix Tudum + JustWatch ES)
 
 ![La actividad después de una sincronización, en el idioma del televisor](img/app-sync.jpg)
 
+`JustWatch ES` es el código del país elegido: otro país cambia ese código, los
+títulos de las filas y las páginas que lee la app.
+
 Los números significan:
 
 | Valor | Significado |
@@ -105,6 +108,19 @@ cualquier otro idioma recibe inglés.
 
 Con la pantalla en español esos botones se llaman `Sincronizar`, `Diagnóstico`,
 `Destino` e `Idioma`, así que los pasos de arriba nombran el botón, no su etiqueta.
+
+### El país de la pantalla
+
+El botón **País** muestra la elección actual y abre la lista de países admitidos:
+España, Alemania, Países Bajos, Francia, Italia, Reino Unido, Estados Unidos,
+Portugal, Bélgica, Austria, Suiza, Suecia, Polonia, Irlanda, México, Brasil y
+Argentina. La app arranca con el país de la configuración regional del televisor
+cuando está en esa lista, y con España en caso contrario. La elección se guarda como
+el idioma, y los títulos de las filas llevan el nombre del país en el idioma de la
+pantalla: una pantalla en español con Alemania seleccionada muestra
+`Netflix · Top series Alemania`, y una en inglés `Netflix · Top series Germany`.
+Cambiar de país o de idioma elimina las filas anteriores de esta app, así que no
+queda ninguna fila vacía del país anterior.
 
 ## 6. Ver las filas
 
@@ -132,10 +148,11 @@ diga **Destination: Watch Next**, que publica las mismas filas en Watch Next; pu
 
 ## 7. El día a día
 
-La app sincroniza al arrancar, cada 24 horas y cuando pulsas **Sync**. Una
-actualización que falla mantiene las filas ya publicadas y el informe lo dice: no se
-borran las filas anteriores y el último documento bueno sigue en
-`files/last_good.json`.
+La app sincroniza al arrancar, cada 24 horas y cuando pulsas **Sync**. Una fuente
+que falla o vuelve vacía se nombra en el informe y las demás filas se publican
+igualmente, así que un país donde JustWatch tiene poco puede publicar solo las filas
+de Netflix; cuando no se puede publicar nada, las filas que ya están en el lanzador
+se mantienen y el último documento bueno sigue en `files/last_good-<cc>.json`.
 
 ## 8. Problemas y soluciones
 
@@ -143,7 +160,7 @@ borran las filas anteriores y el último documento bueno sigue en
 |---|---|---|
 | No aparece ninguna fila | el lanzador oculta los canales, o **Destination** apunta a la otra tabla | activa los canales propios del lanzador (Projectivy: `Categorías / Canales → Habilitar canales`), o cambia **Destination** y pulsa **Sync** |
 | El informe está OK pero las tarjetas no hacen nada | falta la app destino, o la tarjeta se descartó porque su enlace no resolvió en el dispositivo | instala Netflix o Prime Video; el informe cuenta las tarjetas descartadas como `N without a resolvable link` |
-| `FAILED refresh of on-box sources …` | no hay ruta HTTPS a `www.netflix.com` o a `apis.justwatch.com`; las caídas puntuales del edge ocurren | no hay nada que reparar en la app: las filas anteriores siguen publicadas. Reinténtalo más tarde con **Sync** |
+| `FAILED refresh of on-box sources …` | no hay ruta HTTPS a `www.netflix.com` o a `apis.justwatch.com`; las caídas puntuales del edge ocurren | no hay nada que reparar en la app: el informe nombra la fuente y las demás filas se publican igualmente, y cuando no se publica nada las filas anteriores siguen. Reinténtalo más tarde con **Sync** |
 | **Diagnostics** muestra 0 items por canal | los canales existen pero los programas no se publicaron, o la tabla en pantalla es la del otro **Destination** | ejecuta **Sync** con el **Destination** que muestra el lanzador y vuelve a leer **Diagnostics** |
 | `SecurityException` o un error de cleartext en el informe | no se concedió `READ_TV_LISTINGS`, o la URL externa de top.json es `http` en claro | concede el diálogo en la siguiente sincronización; para la URL externa opcional usa `https` cuando sea posible |
 

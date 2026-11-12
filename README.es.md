@@ -9,30 +9,59 @@
 Ni Netflix ni Prime Video publican un Top 10 por país en el TV Provider de Android
 TV: publican *seguir viendo* y un canal de vista previa curado. `TvContract` no
 tiene ninguna tabla para un ranking, así que el lanzador de fábrica y Projectivy
-solo pueden mostrar lo que las apps deciden publicar, y una fila "Top series
-España" no puede existir sin una app que la publique. Esta app es dueña de esas dos
+solo pueden mostrar lo que las apps deciden publicar, y una fila de ranking de un
+país elegido no puede existir sin una app que la publique. Esta app es dueña de esas dos
 filas de ranking, las publica en el TV Provider como canales propios y
 consultables, y deja intactos *seguir viendo* y las filas de cualquier otro
 paquete.
 
 TV Feeder es una pequeña aplicación de Android TV que se instala manualmente.
-Construye una fila **Top series España** y otra **Top películas España** con las
-fuentes oficiales de Netflix y JustWatch, las publica como canales propios del TV
-Provider y abre la aplicación correspondiente cuando se pulsa una tarjeta. Se
-ejecuta en la propia caja: sin PC, sin servidor, sin clave de API y sin cuenta.
+Construye dos filas de ranking, **Top series** y **Top películas**, para el país
+que elijas en su pantalla, con las fuentes oficiales de Netflix y JustWatch, las
+publica como canales propios del TV Provider y abre la aplicación correspondiente
+cuando se pulsa una tarjeta. Se ejecuta en la propia caja: sin PC, sin servidor,
+sin clave de API y sin cuenta.
 
 ## Qué publica
 
 | Fila | Productor de la fila | Fuente |
 |---|---|---|
-| Netflix · Top series España | esta aplicación | la página Top 10 de Netflix Tudum para España (`SERIES`) |
-| Netflix · Top películas España | esta aplicación | la página Top 10 de España del mismo sitio (`MOVIES`) |
-| Prime Video · Top series / películas España | esta aplicación | títulos populares de JustWatch, `country: ES`, ofertas incluidas en la suscripción |
+| Netflix · Top series *país* | esta aplicación | la página Top 10 de series de Netflix Tudum para ese país (`SERIES`), p. ej. `netflix.com/tudum/top10/spain/tv` |
+| Netflix · Top películas *país* | esta aplicación | la página de películas del mismo sitio para ese país (`MOVIES`), p. ej. `netflix.com/tudum/top10/spain` |
+| Prime Video · Top series *país* | esta aplicación | títulos populares de JustWatch, `country: <ISO>`, ofertas incluidas en la suscripción |
+| Prime Video · Top películas *país* | esta aplicación | la misma consulta a JustWatch, ofertas incluidas en la suscripción |
+| Disney+ · Top series *país* | esta aplicación | la misma consulta a JustWatch con el paquete `dnp`, ofertas incluidas en la suscripción |
+| Disney+ · Top películas *país* | esta aplicación | la misma consulta a JustWatch con el paquete `dnp` |
+| Max · Top series *país* | esta aplicación | la misma consulta a JustWatch con el paquete `mxx`, conservando solo la oferta que es de Max |
+| Max · Top películas *país* | esta aplicación | la misma consulta a JustWatch con el paquete `mxx` |
+| Apple TV · Top series *país* | esta aplicación | el ranking de series «Lo más popular ahora mismo» de la tienda Apple de ese país (`uts.col.ChartsShows.tvs.sbd.4000`) |
+| Apple TV · Top películas *país* | esta aplicación | el ranking de películas de la tienda Apple de ese país (`uts.col.ChartsMovies`) |
+| Movistar+ · Top series *país* | esta aplicación | la misma consulta a JustWatch con el paquete `mvs`; su enlace es `http://wl.movistarplus.es/…`, que la app registra en http y https |
+| Movistar+ · Top películas *país* | esta aplicación | la misma consulta a JustWatch con el paquete `mvs`; su enlace es `http://wl.movistarplus.es/…`, que la app registra en http y https |
+| SkyShowtime · Top series *país* | esta aplicación | la misma consulta a JustWatch con el paquete `sst` |
+| SkyShowtime · Top películas *país* | esta aplicación | la misma consulta a JustWatch con el paquete `sst` |
+| Filmin · Top series *país* | esta aplicación | la misma consulta a JustWatch con el paquete `fil`; su app de TV solo declara sus propios hosts, así que esta tarjeta abre Filmin y no el título |
+| Filmin · Top películas *país* | esta aplicación | la misma consulta a JustWatch con el paquete `fil`; su app de TV solo declara sus propios hosts, así que esta tarjeta abre Filmin y no el título |
+
+Cada tarjeta abre la app de su plataforma cuando esa app está instalada. La misma
+compilación corre en televisores a los que les faltan algunas de estas apps, así que en ese
+caso la tarjeta abre la página web de la plataforma en el navegador del televisor y, si no
+hay navegador, ofrece la página de la app en la tienda; solo se descarta la tarjeta que no
+tiene ningún destino, y el informe de sincronización la cuenta. Las filas de Apple son el
+ranking de la propia tienda, así que pueden incluir títulos de compra o alquiler.
+
+Se recoge un solo país a la vez, y su nombre va en el título de la fila, en el
+idioma de la pantalla: con Alemania seleccionada las filas dicen **Netflix · Top
+series Alemania** en una pantalla en español y **Netflix · Top series Germany** en
+una en inglés. Los identificadores de canal llevan el código del país
+(`netflix-top-series-de`, `prime-top-films-de`), así que dos países nunca comparten
+una fila. Esta guía usa España en sus ejemplos (`netflix-top-series-es`).
 
 *Seguir viendo* no se toca: esa fila la publican Netflix y Prime Video por su
-cuenta. El documento se construye a partir de las dos páginas de España y de las
-dos consultas a JustWatch, nunca a partir del conjunto de datos semanal mundial de
-Netflix de 33 MB, que ninguna caja de TV debería tener que descargar.
+cuenta. El documento se construye a partir de las dos páginas de Tudum del país
+elegido y de las dos consultas a JustWatch para ese país, nunca a partir del
+conjunto de datos semanal mundial de Netflix de 33 MB, que ninguna caja de TV
+debería tener que descargar.
 
 Cada tarjeta se resuelve en el dispositivo antes de publicarse, así que al pulsarla
 se abre Netflix o Prime Video en lugar de un enlace muerto. Una tarjeta cuyo
@@ -50,11 +79,17 @@ que se comprobó.
 
 ![Las filas Top de Prime Video y Netflix en el televisor](docs/img/launcher-rows.jpg)
 
-*Projectivy mostrando la fila **Prime Video · Top series España** sobre las de Netflix: la app publicó el ranking, las carátulas y el destino de cada tarjeta.*
+*Projectivy mostrando la fila **Prime Video · Top series** sobre las de Netflix: la app publicó el ranking, las carátulas y el destino de cada tarjeta.*
 
 ![La app tras una sincronización](docs/img/app-sync.jpg)
 
-*Una sincronización en la caja: cuatro filas, cuarenta tarjetas, y la pantalla en el idioma del televisor.*
+*Una sincronización en la caja: cuatro filas, cuarenta tarjetas, el país en el título de cada fila y la pantalla en el idioma del televisor.*
+
+
+![La app tras una sincronización con las plataformas extra](docs/img/sixteen-rows.jpg)
+
+*Dieciséis filas y 160 tarjetas en un televisor que no tiene ninguna de las apps añadidas:
+cada tarjeta abre la página web de la plataforma en el navegador o la página de la app en la tienda.*
 
 ## Requisitos
 
@@ -80,7 +115,7 @@ Projectivy hay que habilitar antes sus propios canales.
 Sin ADB, copia `app/build/toptv-feeder.apk` a un lápiz USB, permite orígenes
 desconocidos para el gestor de archivos del televisor e instálala desde ahí.
 
-El documento se guarda en caché en `files/last_good.json`, dentro del directorio
+El documento se guarda en caché en `files/last_good-<cc>.json`, dentro del directorio
 privado de datos de la aplicación, de modo que una actualización fallida deja
 intactas las filas que ya ves.
 
@@ -94,9 +129,11 @@ Instalación paso a paso en un dispositivo real, con capturas: [install.es.md](d
 | diario | cada 24 horas, con cualquier red |
 | manual | al pulsar **Sync** en la actividad |
 
-Una actualización es todo o nada: si falla una de las cuatro fuentes, el informe la
-nombra y las filas publicadas se quedan como están en lugar de ser sustituidas por
-datos parciales.
+Una actualización ya no se detiene en la primera fuente que falla: una fuente que
+falla o vuelve vacía se nombra en el informe y las demás filas se publican
+igualmente, así que un país donde JustWatch tiene poco puede publicar solo las
+filas de Netflix. Cuando no se puede publicar nada, las filas que ya están en el
+lanzador se quedan intactas.
 
 ## Destino de las filas
 
@@ -116,6 +153,24 @@ actividad (`Language` con la pantalla en inglés) lo va cambiando: el del televi
 informe de sincronización se escribe en el idioma que tiene la pantalla cuando corre
 la sincronización. Solo se publican inglés y español, así que un televisor en
 cualquier otro idioma recibe inglés.
+
+## País
+
+La app recoge los rankings de **un solo país**, que se elige en su pantalla. Arranca
+con el país de la configuración regional del propio televisor cuando la app lo
+admite, y con España en caso contrario. El botón **País** (`Country` con la pantalla
+en inglés) muestra la elección actual, `País: España`, y abre la lista de países
+admitidos:
+
+España (ES), Alemania (DE), Países Bajos (NL), Francia (FR), Italia (IT), Reino
+Unido (GB), Estados Unidos (US), Portugal (PT), Bélgica (BE), Austria (AT), Suiza
+(CH), Suecia (SE), Polonia (PL), Irlanda (IE), México (MX), Brasil (BR) y Argentina
+(AR).
+
+La elección se guarda como el idioma y sobrevive a los reinicios, y los títulos de
+las filas llevan el nombre del país en el idioma de la pantalla. Cambiar de país o
+de idioma borra las filas anteriores de esta app, así que el lanzador no se queda
+con filas vacías del país anterior.
 
 ## Verificación
 

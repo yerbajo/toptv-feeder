@@ -84,6 +84,9 @@ Source: on-box sources (Netflix Tudum + JustWatch ES)
 
 ![Die Activity nach einer Synchronisation, in der Sprache des Fernsehers](img/app-sync.jpg)
 
+`JustWatch ES` ist der Code des gewählten Landes: Ein anderes Land ändert diesen
+Code, die Zeilentitel und die Seiten, die die App liest.
+
 Die Zahlen bedeuten:
 
 | Wert | Bedeutung |
@@ -108,6 +111,19 @@ anderen Sprache bekommt Englisch.
 Auf einem spanischen Bildschirm heißen diese Schaltflächen `Sincronizar`,
 `Diagnóstico`, `Destino` und `Idioma`; die Schritte oben nennen deshalb die
 Schaltfläche, nicht ihre Beschriftung.
+
+### Das Land des Bildschirms
+
+Die Schaltfläche **Land** zeigt die aktuelle Wahl und öffnet die Liste der
+unterstützten Länder: Spanien, Deutschland, Niederlande, Frankreich, Italien,
+Vereinigtes Königreich, Vereinigte Staaten, Portugal, Belgien, Österreich, Schweiz,
+Schweden, Polen, Irland, Mexiko, Brasilien und Argentinien. Die App startet mit dem
+Land des TV-Locales, wenn es in dieser Liste steht, und sonst mit Spanien. Die Wahl
+wird wie die Sprache gespeichert, und die Zeilentitel tragen den Ländernamen in der
+Sprache des Bildschirms: ein spanischer Bildschirm mit Deutschland zeigt
+`Netflix · Top series Alemania`, ein englischer `Netflix · Top series Germany`. Ein
+Wechsel des Landes oder der Sprache entfernt die älteren Zeilen dieser App, es
+bleibt also keine leere Zeile des vorherigen Landes zurück.
 
 ## 6. Die Zeilen anzeigen
 
@@ -138,9 +154,11 @@ leert.
 ## 7. Der Alltag
 
 Die App synchronisiert beim Start, alle 24 Stunden und wenn Sie auf **Sync**
-drücken. Eine fehlgeschlagene Aktualisierung behält die bereits veröffentlichten
-Zeilen, und der Bericht sagt das auch: Die vorherigen Zeilen werden nicht gelöscht,
-und das letzte gültige Dokument bleibt in `files/last_good.json`.
+drücken. Eine Quelle, die fehlschlägt oder leer zurückkommt, wird im Bericht genannt
+und die anderen Zeilen werden trotzdem veröffentlicht, ein Land mit dünnem JustWatch
+kann also nur die Netflix-Zeilen veröffentlichen; wenn gar nichts veröffentlicht
+werden kann, bleiben die Zeilen im Launcher stehen und das letzte gültige Dokument
+bleibt in `files/last_good-<cc>.json`.
 
 ## 8. Fehlersuche
 
@@ -148,7 +166,7 @@ und das letzte gültige Dokument bleibt in `files/last_good.json`.
 |---|---|---|
 | Gar keine Zeilen | der Launcher verbirgt die Kanäle, oder **Destination** zielt auf die andere Tabelle | aktivieren Sie die eigenen Kanäle des Launchers (Projectivy: `Categorías / Canales → Habilitar canales`), oder wechseln Sie **Destination** und drücken Sie **Sync** |
 | Der Bericht ist OK, aber die Karten tun nichts | die Ziel-App fehlt, oder die Karte wurde verworfen, weil ihr Link auf dem Gerät nicht aufgelöst wurde | installieren Sie Netflix oder Prime Video; der Bericht zählt verworfene Karten als `N without a resolvable link` |
-| `FAILED refresh of on-box sources …` | keine HTTPS-Route zu `www.netflix.com` oder `apis.justwatch.com`; kurze Edge-Ausfälle kommen vor | in der App gibt es nichts zu reparieren: die alten Zeilen bleiben veröffentlicht. Versuchen Sie es später erneut mit **Sync** |
+| `FAILED refresh of on-box sources …` | keine HTTPS-Route zu `www.netflix.com` oder `apis.justwatch.com`; kurze Edge-Ausfälle kommen vor | in der App gibt es nichts zu reparieren: der Bericht nennt die Quelle und die anderen Zeilen werden trotzdem veröffentlicht, und wenn nichts veröffentlicht wird, bleiben die alten Zeilen. Versuchen Sie es später erneut mit **Sync** |
 | **Diagnostics** zeigt 0 items pro Kanal | die Kanäle existieren, aber die Programme wurden nicht veröffentlicht, oder die angezeigte Tabelle gehört zur anderen **Destination** | führen Sie **Sync** mit der **Destination** aus, die der Launcher zeigt, und lesen Sie **Diagnostics** erneut |
 | `SecurityException` oder ein Cleartext-Fehler im Bericht | `READ_TV_LISTINGS` wurde nicht erteilt, oder die externe top.json-URL ist klares `http` | erteilen Sie die Berechtigung im Dialog bei der nächsten Synchronisation; nutzen Sie für die optionale externe URL möglichst `https` |
 

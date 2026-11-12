@@ -20,9 +20,36 @@ top.json externe*).
 | Rangée | Producteur | Source |
 |---|---|---|
 | Seguir viendo | Netflix / Prime Video eux-mêmes | leurs propres programmes Watch Next, non modifiés par ce projet |
-| Netflix · Top series España | ce feeder | la page Top 10 Espagne de Netflix Tudum (`SERIES`), pays ES |
-| Netflix · Top películas España | ce feeder | la page Top 10 Espagne du même site (`MOVIES`) |
-| Prime Video · Top series / películas España | ce feeder | les titres populaires de JustWatch, Prime Video compris, pays ES |
+| Netflix · Top series *pays* | ce feeder | la page Top 10 des séries de Netflix Tudum du pays choisi (`SERIES`) |
+| Netflix · Top películas *pays* | ce feeder | la page des films du même site pour ce pays (`MOVIES`) |
+| Prime Video · Top series *pays* | ce feeder | les titres populaires de JustWatch, Prime Video compris, `country: <ISO>` |
+| Prime Video · Top películas *pays* | ce feeder | la même requête JustWatch, Prime Video compris, `country: <ISO>` |
+| Disney+ · Top series *pays* | cette app | JustWatch avec le paquet `dnp`, offres comprises dans l'abonnement |
+| Disney+ · Top películas *pays* | cette app | JustWatch avec le paquet `dnp`, offres comprises dans l'abonnement |
+| Max · Top series *pays* | cette app | JustWatch avec le paquet `mxx`, offres comprises dans l'abonnement |
+| Max · Top películas *pays* | cette app | JustWatch avec le paquet `mxx`, offres comprises dans l'abonnement |
+| Apple TV · Top series *pays* | cette app | le classement des séries de la boutique Apple |
+| Apple TV · Top películas *pays* | cette app | le classement des films de la boutique Apple |
+| Movistar+ · Top series *pays* | cette app | JustWatch avec le paquet `mvs` ; le lien est en http et l'application accepte http et https |
+| Movistar+ · Top películas *pays* | cette app | JustWatch avec le paquet `mvs` ; le lien est en http et l'application accepte http et https |
+| SkyShowtime · Top series *pays* | cette app | JustWatch avec le paquet `sst`, offres comprises dans l'abonnement |
+| SkyShowtime · Top películas *pays* | cette app | JustWatch avec le paquet `sst`, offres comprises dans l'abonnement |
+| Filmin · Top series *pays* | cette app | JustWatch avec le paquet `fil`, offres comprises dans l'abonnement; son application TV ne déclare que ses propres hôtes : la carte ouvre Filmin, pas le titre |
+| Filmin · Top películas *pays* | cette app | JustWatch avec le paquet `fil`, offres comprises dans l'abonnement; son application TV ne déclare que ses propres hôtes : la carte ouvre Filmin, pas le titre |
+
+Chaque carte est résolue sur l'appareil avant publication : d'abord le lien profond de
+l'application, puis l'application elle-même, ensuite la page web de la plateforme dans le
+navigateur du téléviseur et enfin la page de l'application dans la boutique. Seule une
+carte sans aucune destination est écartée : un téléviseur dépourvu de l'une de ces
+applications affiche donc toujours le classement au lieu d'une ligne vide.
+
+
+Un seul pays, et son nom figure dans le titre de chaque rangée, dans la langue de
+l'écran : `Netflix · Top series Alemania` sur un écran espagnol avec l'Allemagne
+sélectionnée, `Netflix · Top series Germany` sur un écran anglais. Les identifiants
+de chaîne portent le code du pays (`netflix-top-series-de`, `prime-top-films-de`),
+donc deux pays ne partagent jamais une rangée. Les exemples de ce guide sont
+l'Espagne (`netflix-top-series-es`).
 
 Les rangées sont publiées dans l'ordre du classement : le rang 1 est inséré en
 dernier et porte le poids d'aperçu le plus élevé, donc la rangée s'ouvre sur le rang
@@ -30,8 +57,8 @@ dernier et porte le poids d'aperçu le plus élevé, donc la rangée s'ouvre sur
 réordonner les cartes.
 
 Prime Video ne publie aucun classement propre à un pays, donc les rangées Prime
-utilisent JustWatch : une requête GraphQL `popularTitles` limitée à `country: ES`
-et aux offres **comprises** dans l'abonnement (`prv`, et `pva` pour l'offre avec
+utilisent JustWatch : une requête GraphQL `popularTitles` limitée au pays choisi
+(`country: <ISO>`) et aux offres **comprises** dans l'abonnement (`prv`, et `pva` pour l'offre avec
 publicité). Les locations sont exclues en filtrant sur `prv` : chez JustWatch `amz`
 est la boutique et `amp` tout le groupe Amazon, et les deux laissent passer des
 locations dans la liste. L'application exécute exactement cette requête ; le script
@@ -66,8 +93,8 @@ ignition de 3,2 Mo dont le dex n'a ni code de boutique ni code de classement.
 Le chemin JustWatch est couvert par des contrôles hors ligne sur des réponses
 **capturées** (réduites à trois titres et aux offres Prime), plus une assertion
 selon laquelle un endpoint en échec produit un avis au lieu de rangées. Sur le
-boîtier, une source en échec interrompt toute l'actualisation, ce qui est la plus
-stricte des deux options.
+boîtier, les deux sources sont indépendantes : une source qui échoue ou revient vide
+est nommée dans le rapport et les autres rangées sont publiées quand même.
 
 ```bash
 python3 tools/fetch_top.py --out top.json      # same rows, built on a PC
@@ -82,9 +109,9 @@ Le boîtier n'a besoin ni de PC ni d'URL :
 3. Laissez le champ URL **vide**, appuyez sur **Sync** et acceptez la boîte de
    dialogue `READ_TV_LISTINGS`.
 
-L'application récupère les deux pages Top 10 Espagne de Netflix et les deux
-requêtes JustWatch en HTTPS, construit le document, remplace la copie en cache et
-publie les rangées. L'exécution au démarrage et la tâche quotidienne la répètent
+L'application récupère les deux pages Top 10 de Netflix Tudum du pays choisi et les
+deux requêtes JustWatch pour ce pays en HTTPS, construit le document, remplace la
+copie en cache et publie les rangées. L'exécution au démarrage et la tâche quotidienne la répètent
 sans écran ouvert. Une installation sans aucun réseau récupère encore la copie en
 cache (voir *Mode autonome*).
 
@@ -118,9 +145,9 @@ seul en mode autonome.
 
 | Question | Réponse |
 |---|---|
-| Où vit le document ? | dans `files/last_good.json`, dans le répertoire de données privé de l'application, inaccessible aux autres applications et à `adb` sans root |
-| Quand est-il remplacé ? | seulement une fois le document fraîchement construit analysé ; il est écrit dans `last_good.json.tmp`, synchronisé par fsync puis renommé, de sorte qu'un incident ne laisse jamais un fichier à moitié écrit |
-| Et si une source échoue ? | toute l'actualisation échoue. Quatre rangées ou aucune : le rapport nomme la source en échec et les rangées publiées restent telles quelles |
+| Où vit le document ? | dans `files/last_good-<cc>.json`, dans le répertoire de données privé de l'application, inaccessible aux autres applications et à `adb` sans root |
+| Quand est-il remplacé ? | seulement une fois le document fraîchement construit analysé ; il est écrit dans `last_good-<cc>.json.tmp`, synchronisé par fsync puis renommé, de sorte qu'un incident ne laisse jamais un fichier à moitié écrit |
+| Et si une source échoue ? | seules les rangées de cette source sont écartées : le rapport la nomme et les autres rangées sont publiées, donc un pays où JustWatch est maigre peut ne publier que les rangées Netflix. Quand rien ne peut être publié, les rangées précédentes restent telles quelles |
 | Et si le boîtier est hors ligne ? | rien n'est publié et les rangées que vous voyez restent. Le cache n'est republié qu'à un **démarrage à froid** (rien de publié depuis la création des données de l'application), donc une exécution quotidienne hors ligne ne fait jamais varier le fournisseur |
 | Avec quoi construit-on une carte Netflix ? | avec une entité de page : rang, semaine, titre, affiche et id de vidéo viennent tous de la même charge utile, donc une page mise à jour en retard ne peut pas les désaccorder. Le jeu de données mondial de 33 Mo n'est jamais téléchargé |
 | Comment la table est-elle choisie ? | le bouton **Destination** de l'activité bascule entre les chaînes de recommandations et Watch Next, et synchronise immédiatement ; il a remplacé le changement d'URL |
@@ -135,13 +162,11 @@ Collision Course » et la page appelle la même vidéo « Ice Age 5: Collision C
 lire ; `tests/test_autonomous_feeder.py` enregistre cette unique différence
 autorisée et échoue si un autre titre diverge.
 
-Une source en échec est nommée dans le rapport, par exemple :
-
-```
-FAILED refresh of on-box sources (Netflix Tudum + JustWatch ES): HTTP 503 from https://apis.justwatch.com/graphql
-Last good copy cached at 2026-11-11 18:20 (held back, not republished).
-Nothing published, previous rows left untouched (S5).
-```
+Une source qui échoue ou revient vide est nommée dans le rapport, et les rangées de
+l'autre sont publiées quand même : un pays où JustWatch n'a aucun titre reçoit
+malgré tout les deux rangées Netflix, et un échec de Tudum laisse les rangées Prime.
+Quand rien du tout ne peut être publié, les rangées précédentes restent intactes
+dans le lanceur.
 
 ## Langue
 
@@ -159,6 +184,55 @@ langue reçoit l'anglais. Android 9 n'a pas d'API de langue par application : le
 choix est appliqué en fournissant à l'activité et au chemin de synchronisation un
 contexte dont la configuration porte cette locale, et l'écran est reconstruit à
 l'appui du bouton.
+
+## Pays
+
+L'application récupère les classements d'**un seul pays**, également choisi dans
+l'activité. La valeur par défaut vient du téléviseur : le pays de sa locale lorsque
+l'application le prend en charge, et l'Espagne sinon. Le bouton **Pays** montre le
+choix courant (`Pays : Espagne`, et `Country: Spain` sur un écran anglais) et ouvre
+la liste des pays pris en charge :
+
+Espagne (ES), Allemagne (DE), Pays-Bas (NL), France (FR), Italie (IT), Royaume-Uni
+(GB), États-Unis (US), Portugal (PT), Belgique (BE), Autriche (AT), Suisse (CH),
+Suède (SE), Pologne (PL), Irlande (IE), Mexique (MX), Brésil (BR) et Argentine (AR).
+
+Le choix est enregistré comme la langue et survit aux redémarrages, et il décide de
+tout ce qui dépend du pays : les deux pages Tudum (`/tudum/top10/<slug>/tv` pour les
+séries et `/tudum/top10/<slug>` pour les films), le `country` et le `language` de la
+requête JustWatch, les identifiants de chaîne (`netflix-top-series-de`) et les titres
+des rangées, qui portent le nom du pays dans la langue de l'écran : « Netflix · Top
+series Alemania » sur un écran espagnol, « Netflix · Top series Germany » sur un
+écran anglais. Changer de pays ou de langue supprime les chaînes de ce paquet que le
+nouveau document ne contient pas, donc le lanceur ne conserve pas de rangée vide du
+pays précédent ; les chaînes d'aucun autre paquet ne sont touchées.
+
+## Plateformes et origine de chaque ligne
+
+| Plateforme | Source du classement | Paquet JustWatch | Application visée par la carte | Hôte déclaré par l'application |
+|---|---|---|---|---|
+| Netflix | ses propres pages Top 10 Tudum | — | `com.netflix.ninja` | `www.netflix.com` |
+| Prime Video | popularité JustWatch | `prv` | `com.amazon.amazonvideo.livingroom` | `app.primevideo.com` |
+| Disney+ | popularité JustWatch | `dnp` | `com.disney.disneyplus` | `disneyplus.com`, `www.disneyplus.com` |
+| Max | popularité JustWatch | `mxx` | `com.wbd.stream` | `play.max.com`, `play.hbomax.com` |
+| Movistar+ | popularité JustWatch | `mvs` | `es.plus.yomvi` | `wl.movistarplus.es` (http et https) |
+| SkyShowtime | popularité JustWatch | `sst` | `com.skyshowtime.skyshowtime.google` | n'importe quelle URL https (aucun hôte dans son filtre) |
+| Filmin | popularité JustWatch | `fil` | `com.filmin.androidtv` | `androidtv.filmin.com`, `vf.filmin.es` |
+| Apple TV | le classement de la boutique Apple | — | `com.apple.atve.androidtv.appletv` | `tv.apple.com` |
+
+Trois affirmations différentes cohabitent dans ce tableau, et le guide les énonce au lieu de
+les confondre. Les lignes Netflix sont le Top 10 publié par Netflix. Les lignes Apple sont le
+classement de la boutique Apple, qui peut contenir des titres à acheter ou à louer. Tout le
+reste est la popularité JustWatch limitée aux titres compris dans ce service, ce que les
+lignes Prime ont toujours été.
+
+Les hôtes viennent des filtres d'intention de chaque APK officiel, pas d'une supposition.
+Filmin est l'exception à connaître : son application TV ne déclare que ses propres hôtes
+d'application, donc une page `filmin.es` ne correspond pas par les données et sa carte ouvre
+l'application Filmin elle-même.
+
+Ajouter une plateforme, c'est une entrée dans `JUSTWATCH_PLATFORMS` dans les deux
+générateurs : libellé, paquet de l'application, paquets demandés et paquets acceptés.
 
 ## Pourquoi les cartes du top n'ouvraient pas leur application
 
@@ -219,6 +293,11 @@ Le générateur fixe `target` sur chaque rangée avec `--target preview|watch_ne
 le boîtier, le même réglage est le bouton **Destination**, qui ne demande ni
 recompilation ni PC.
 
+L'exemple ci-dessus est l'Espagne. `channelId` et `title` dépendent du pays :
+`netflix-top-series-es` porte `"Netflix · Top series España"` pour l'Espagne, et
+`netflix-top-series-de` porte `"Netflix · Top series Alemania"` sur un écran
+espagnol pour l'Allemagne, donc deux pays ne partagent jamais une chaîne.
+
 `target` sélectionne la table du fournisseur et c'est le seul réglage qui vaut la
 peine d'être compris :
 
@@ -258,7 +337,7 @@ TVFEEDER_JSON_JAR=/path/json-20240303.jar python3 tests/test_autonomous_feeder.p
 Le jar est `org.json:json:20240303` de Maven Central, utilisé uniquement pour
 l'exécution sur l'hôte : le code de production prend `org.json` sur la plateforme,
 exactement comme avant. Cela prouve l'analyse de la charge utile des pages, les
-titres de la série parente, l'interruption tout ou rien et la forme du document, et
+titres de la série parente et la forme du document, et
 échoue si l'application se remet à télécharger le jeu de données mondial (S4). Cela
 ne prouve **pas** que Netflix ou JustWatch répondent à un client Android, et la
 résolution des cartes dans `Feeder` nécessite le boîtier (voir *Limites*).
@@ -326,8 +405,10 @@ adb shell am start -a android.intent.action.VIEW \
   que les dix cartes d'une même application gardent des URI distinctes et qu'un
   lanceur ne les fusionne pas.
 - La récupération autonome s'exécute sur le thread du job avec des délais de
-  connexion et de lecture de 20 s par requête, cinq requêtes, tout ou rien. Elle ne
-  s'exécute jamais sur le thread de l'interface.
+  connexion et de lecture de 20 s par requête, cinq requêtes. Une source en échec ne
+  fait plus échouer la synchronisation : elle est nommée dans le rapport et les
+  autres rangées sont publiées. Elle ne s'exécute jamais sur le thread de
+  l'interface.
 - Lire les rangées d'une *autre* application exige
   `android.permission.READ_TV_LISTINGS` (`dangerous`, accordée à l'exécution) **et**
   que la rangée porte `searchable=1`, et c'est pourquoi le feeder marque ainsi ses
@@ -335,6 +416,10 @@ adb shell am start -a android.intent.action.VIEW \
 - La suppression et la republication se font en une seule passe au début de chaque
   synchronisation, et seulement lorsqu'au moins une rangée est valide, donc un
   téléchargement en échec n'efface jamais les rangées que vous voyez déjà.
+- Changer de pays ou de langue republie sous de nouveaux identifiants de chaîne, donc
+  les chaînes de ce paquet que le nouveau document ne contient pas sont supprimées :
+  aucune rangée vide du pays précédent ne reste dans le lanceur, et les chaînes des
+  autres paquets ne sont pas touchées.
 
 ## Limites
 
@@ -363,10 +448,10 @@ adb shell am start -a android.intent.action.VIEW \
   spécifié (L15).
 - Le générateur Python a besoin de `curl` parce que netflix.com réinitialise les
   requêtes HTTP/1.1 des clients scriptés. Le boîtier utilise `HttpURLConnection`,
-  donc si Netflix le réinitialise de la même façon, le rapport affiche
-  `FAILED refresh of on-box sources …: …` et les rangées précédentes restent. Le
-  mode top.json externe est alors la solution de repli jusqu'à ce que le transport
-  fonctionne.
+  donc si Netflix le réinitialise de la même façon, le rapport nomme cette source et
+  les rangées Prime sont publiées quand même ; quand rien n'est publié, les rangées
+  précédentes restent. Le mode top.json externe est alors la solution de repli
+  jusqu'à ce que le transport fonctionne.
 - `targetSdkVersion 28` bloque le HTTP en clair par défaut, donc le manifeste doit
   définir `android:usesCleartextTraffic="true"` pour le mode externe ; sans cela,
   chaque synchronisation échoue avec `IOException: Cleartext HTTP traffic to ...

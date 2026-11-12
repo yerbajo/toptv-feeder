@@ -84,6 +84,9 @@ Source: on-box sources (Netflix Tudum + JustWatch ES)
 
 ![L'activité après une synchronisation, dans la langue du téléviseur](img/app-sync.jpg)
 
+`JustWatch ES` est le code du pays choisi : un autre pays change ce code, les titres
+des rangées et les pages que lit l'application.
+
 Les nombres signifient :
 
 | Valeur | Signification |
@@ -107,6 +110,19 @@ livrés ; un téléviseur dans toute autre langue reçoit l'anglais.
 Sur un écran espagnol, ces boutons s'appellent `Sincronizar`, `Diagnóstico`,
 `Destino` et `Idioma` ; les étapes ci-dessus nomment donc le bouton, pas son
 libellé.
+
+### Le pays de l'écran
+
+Le bouton **Pays** affiche le choix courant et ouvre la liste des pays pris en
+charge : Espagne, Allemagne, Pays-Bas, France, Italie, Royaume-Uni, États-Unis,
+Portugal, Belgique, Autriche, Suisse, Suède, Pologne, Irlande, Mexique, Brésil et
+Argentine. L'application démarre avec le pays de la locale du téléviseur lorsqu'il
+figure dans cette liste, et avec l'Espagne sinon. Le choix est enregistré comme la
+langue, et les titres des rangées portent le nom du pays dans la langue de l'écran :
+un écran espagnol avec l'Allemagne sélectionnée affiche `Netflix · Top series
+Alemania`, un écran anglais `Netflix · Top series Germany`. Changer de pays ou de
+langue supprime les anciennes rangées de cette application, donc aucune rangée vide
+du pays précédent ne reste.
 
 ## 6. Afficher les rangées
 
@@ -137,9 +153,11 @@ l'autre table.
 ## 7. Au quotidien
 
 L'application synchronise au démarrage, toutes les 24 heures et lorsque vous
-appuyez sur **Sync**. Une actualisation qui échoue conserve les rangées déjà
-publiées et le rapport le dit : les rangées précédentes ne sont pas effacées et le
-dernier document valide reste dans `files/last_good.json`.
+appuyez sur **Sync**. Une source qui échoue ou revient vide est nommée dans le
+rapport et les autres rangées sont publiées quand même, donc un pays où JustWatch
+est maigre peut ne publier que les rangées Netflix ; quand rien ne peut être publié,
+les rangées déjà présentes dans le lanceur restent et le dernier document valide
+reste dans `files/last_good-<cc>.json`.
 
 ## 8. Dépannage
 
@@ -147,7 +165,7 @@ dernier document valide reste dans `files/last_good.json`.
 |---|---|---|
 | Aucune rangée | le lanceur masque les chaînes, ou **Destination** cible l'autre table | activez les chaînes propres au lanceur (Projectivy : `Categorías / Canales → Habilitar canales`), ou changez **Destination** et appuyez sur **Sync** |
 | Le rapport est OK mais les cartes ne font rien | l'application cible manque, ou la carte a été écartée parce que son lien ne s'est pas résolu sur l'appareil | installez Netflix ou Prime Video ; le rapport compte les cartes écartées comme `N without a resolvable link` |
-| `FAILED refresh of on-box sources …` | pas de route HTTPS vers `www.netflix.com` ou `apis.justwatch.com` ; des pannes passagères du edge arrivent | rien à réparer dans l'application : les anciennes rangées restent publiées. Réessayez plus tard avec **Sync** |
+| `FAILED refresh of on-box sources …` | pas de route HTTPS vers `www.netflix.com` ou `apis.justwatch.com` ; des pannes passagères du edge arrivent | rien à réparer dans l'application : le rapport nomme la source et les autres rangées sont publiées quand même, et quand rien n'est publié les anciennes rangées restent. Réessayez plus tard avec **Sync** |
 | **Diagnostics** affiche 0 items par chaîne | les chaînes existent mais les programmes n'ont pas été publiés, ou la table affichée est celle de l'autre **Destination** | lancez **Sync** avec la **Destination** affichée par le lanceur, puis relisez **Diagnostics** |
 | `SecurityException` ou une erreur de cleartext dans le rapport | `READ_TV_LISTINGS` n'a pas été accordée, ou l'URL externe top.json est en `http` clair | accordez la boîte de dialogue à la synchronisation suivante ; pour l'URL externe facultative, utilisez `https` quand c'est possible |
 

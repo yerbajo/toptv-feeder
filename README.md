@@ -9,29 +9,55 @@ English · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](RE
 Neither Netflix nor Prime Video publishes a per-country Top 10 to the Android TV
 Provider: they publish continue-watching and one curated preview channel.
 `TvContract` has no table for a ranking, so the stock launcher and Projectivy can
-only show what the apps choose to publish, and a "Top series España" row cannot
-exist without an app that publishes it. This app owns those two ranked rows,
+only show what the apps choose to publish, and a ranked row for a chosen country
+cannot exist without an app that publishes it. This app owns those two ranked rows,
 publishes them into the TV Provider as its own searchable channels, and leaves
 continue-watching and every other package's rows untouched.
 
-TV Feeder is a small sideloaded Android TV app. It builds a **Top series España**
-and a **Top películas España** row from the official Netflix and JustWatch
-sources, publishes them as its own TV Provider channels, and opens the matching
-app when a card is tapped. It runs on the box itself: no PC, no server, no API
-key and no account.
+TV Feeder is a small sideloaded Android TV app. It builds two ranked rows,
+**Top series** and **Top películas**, for the country you select on its screen,
+from the official Netflix and JustWatch sources, publishes them as its own TV
+Provider channels, and opens the matching app when a card is tapped. It runs on
+the box itself: no PC, no server, no API key and no account.
 
 ## What it publishes
 
 | Row | Row producer | Source |
 |---|---|---|
-| Netflix · Top series España | this app | the Netflix Tudum Spain Top 10 page (`SERIES`) |
-| Netflix · Top películas España | this app | the same site's Spain Top 10 page (`MOVIES`) |
-| Prime Video · Top series / películas España | this app | JustWatch popular titles, `country: ES`, offers included with the subscription |
+| Netflix · Top series *country* | this app | the Netflix Tudum Top 10 series page of that country (`SERIES`), e.g. `netflix.com/tudum/top10/spain/tv` |
+| Netflix · Top películas *country* | this app | the same site's film page of that country (`MOVIES`), e.g. `netflix.com/tudum/top10/spain` |
+| Prime Video · Top series *country* | this app | JustWatch popular titles, `country: <ISO code>`, offers included with the subscription |
+| Prime Video · Top películas *country* | this app | the same JustWatch query, offers included with the subscription |
+| Disney+ · Top series *country* | this app | the same JustWatch query with the `dnp` package, offers included with the subscription |
+| Disney+ · Top películas *country* | this app | the same JustWatch query with the `dnp` package |
+| Max · Top series *country* | this app | the same JustWatch query with the `mxx` package, keeping only the offer that belongs to Max |
+| Max · Top películas *country* | this app | the same JustWatch query with the `mxx` package |
+| Apple TV · Top series *country* | this app | Apple's own "Most Popular Now" series chart of that storefront (`uts.col.ChartsShows.tvs.sbd.4000`) |
+| Apple TV · Top películas *country* | this app | Apple's own film chart of that storefront (`uts.col.ChartsMovies`) |
+| Movistar+ · Top series *country* | this app | the same JustWatch query with the `mvs` package; its link is `http://wl.movistarplus.es/…`, which the app registers over http and https |
+| Movistar+ · Top películas *country* | this app | the same JustWatch query with the `mvs` package; its link is `http://wl.movistarplus.es/…`, which the app registers over http and https |
+| SkyShowtime · Top series *country* | this app | the same JustWatch query with the `sst` package |
+| SkyShowtime · Top películas *country* | this app | the same JustWatch query with the `sst` package |
+| Filmin · Top series *country* | this app | the same JustWatch query with the `fil` package; its TV app only claims its own hosts, so this card opens Filmin rather than the title |
+| Filmin · Top películas *country* | this app | the same JustWatch query with the `fil` package; its TV app only claims its own hosts, so this card opens Filmin rather than the title |
+
+Every card opens its platform's app when that app is installed. The same build runs on
+TVs that lack some of these apps, so a card then opens the platform's web page in the
+television's browser, and when there is no browser it offers the app's store page; only a
+card with no destination at all is dropped, and the sync report counts it. The Apple rows
+are Apple's own store chart, so they can include titles sold rather than streamed.
+
+One country at a time, and its name is in the row title, in the language of the
+screen: with Germany selected the rows read **Netflix · Top series Alemania** on a
+Spanish screen and **Netflix · Top series Germany** on an English one. The channel
+ids carry the country code (`netflix-top-series-de`, `prime-top-films-de`), so two
+countries never share a row. This guide uses Spain for its examples
+(`netflix-top-series-es`).
 
 *Seguir viendo* is untouched: Netflix and Prime Video publish that row
-themselves. The document is built from the two Spain pages plus the two JustWatch
-queries, never from Netflix's 33 MB world-wide weekly dataset, which no TV box
-should have to download.
+themselves. The document is built from the two Tudum pages of the selected country
+plus the two JustWatch queries for it, never from Netflix's 33 MB world-wide weekly
+dataset, which no TV box should have to download.
 
 Each card is resolved on the device before it is published, so a tap opens
 Netflix or Prime Video instead of a dead link. A card whose link resolves to
@@ -48,11 +74,17 @@ records what was checked.
 
 ![The Prime Video and Netflix top rows on the TV home screen](docs/img/launcher-rows.jpg)
 
-*Projectivy drawing the **Prime Video · Top series España** row over the Netflix rows: the app published the ranking, the artwork and the tap target.*
+*Projectivy drawing the **Prime Video · Top series** row over the Netflix rows: the app published the ranking, the artwork and the tap target.*
 
 ![The app after one sync](docs/img/app-sync.jpg)
 
-*One sync on the box: four rows, forty cards, and the screen in the TV's own language.*
+*One sync on the box: four rows, forty cards, the country in every row title, and the screen in the TV's own language.*
+
+
+![The app after a sync with the extra platforms](docs/img/sixteen-rows.jpg)
+
+*Sixteen rows and 160 cards on a TV that has none of the extra platform apps: each card opens
+the platform's web page in the browser, or the app's store page.*
 
 ## Requirements
 
@@ -78,7 +110,7 @@ its own channels have to be enabled first.
 Without ADB, copy `app/build/toptv-feeder.apk` to a USB stick, allow unknown sources
 for the file manager on the TV, and install it from there.
 
-The document is cached in `files/last_good.json` inside the app's private data
+The document is cached in `files/last_good-<cc>.json` inside the app's private data
 directory, so a refresh that fails leaves the rows you already see in place.
 
 Step-by-step device setup with screenshots: [install.md](docs/install.md).
@@ -91,9 +123,10 @@ Step-by-step device setup with screenshots: [install.md](docs/install.md).
 | daily | every 24 hours, on any network |
 | manual | when you press **Sync** on the activity |
 
-A refresh is all or nothing: if one of the four sources fails, the report names
-it and the published rows stay untouched rather than being replaced by partial
-data.
+A refresh no longer stops at the first failing source: a source that fails or
+comes back empty is named in the report and the other rows are published anyway,
+so a country where JustWatch is thin may publish only the Netflix rows. When
+nothing can be published at all, the rows already on the launcher stay untouched.
 
 ## Destination
 
@@ -112,6 +145,23 @@ activity cycles it: the TV's own → English → Español (`Idioma` on a Spanish
 screen). The choice is stored and survives reboots, and the sync report is written
 in the language the screen is in when the sync runs. Only English and Spanish ship,
 so a TV in any other language gets English.
+
+## Country
+
+The app collects the rankings of **one country**, chosen on its screen. It opens
+with the country of the TV's own locale when the app supports it, and with Spain
+otherwise. The **Country** button (`País` on a Spanish screen) shows the current
+choice, `Country: Spain`, and opens the list of supported countries:
+
+Spain (ES), Germany (DE), Netherlands (NL), France (FR), Italy (IT), United
+Kingdom (GB), United States (US), Portugal (PT), Belgium (BE), Austria (AT),
+Switzerland (CH), Sweden (SE), Poland (PL), Ireland (IE), Mexico (MX), Brazil (BR)
+and Argentina (AR).
+
+The choice is stored like the language and survives reboots, and the row titles
+carry the country name in the screen's language. Switching country or language
+deletes this app's older rows, so the launcher does not keep empty rows from the
+previous country.
 
 ## Verification
 
