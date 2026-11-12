@@ -37,11 +37,12 @@ top.json externe*).
 | Filmin · Top series *pays* | cette app | JustWatch avec le paquet `fil`, offres comprises dans l'abonnement; son application TV ne déclare que ses propres hôtes : la carte ouvre Filmin, pas le titre |
 | Filmin · Top películas *pays* | cette app | JustWatch avec le paquet `fil`, offres comprises dans l'abonnement; son application TV ne déclare que ses propres hôtes : la carte ouvre Filmin, pas le titre |
 
-Chaque carte est résolue sur l'appareil avant publication : d'abord le lien profond de
-l'application, puis l'application elle-même, ensuite la page web de la plateforme dans le
-navigateur du téléviseur et enfin la page de l'application dans la boutique. Seule une
-carte sans aucune destination est écartée : un téléviseur dépourvu de l'une de ces
-applications affiche donc toujours le classement au lieu d'une ligne vide.
+Une ligne n'existe que là où son application existe. Avant de publier, l'application demande
+à l'appareil si chaque plateforme est installée, ne télécharge rien pour les autres et ne planifie que ces lignes : un téléviseur
+sans Max n'a pas de ligne Max et le lanceur ne porte rien que le foyer ne puisse ouvrir.
+Chaque carte est ensuite résolue sur l'appareil (le lien profond d'abord, l'intent de
+lancement ensuite), et la ligne d'une application absente du plan est supprimée comme
+obsolète à la synchronisation suivante, avec son décompte dans le rapport.
 
 
 Un seul pays, et son nom figure dans le titre de chaque rangée, dans la langue de

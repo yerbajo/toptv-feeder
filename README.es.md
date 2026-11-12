@@ -43,12 +43,12 @@ sin clave de API y sin cuenta.
 | Filmin · Top series *país* | esta aplicación | la misma consulta a JustWatch con el paquete `fil`; su app de TV solo declara sus propios hosts, así que esta tarjeta abre Filmin y no el título |
 | Filmin · Top películas *país* | esta aplicación | la misma consulta a JustWatch con el paquete `fil`; su app de TV solo declara sus propios hosts, así que esta tarjeta abre Filmin y no el título |
 
-Cada tarjeta abre la app de su plataforma cuando esa app está instalada. La misma
-compilación corre en televisores a los que les faltan algunas de estas apps, así que en ese
-caso la tarjeta abre la página web de la plataforma en el navegador del televisor y, si no
-hay navegador, ofrece la página de la app en la tienda; solo se descarta la tarjeta que no
-tiene ningún destino, y el informe de sincronización la cuenta. Las filas de Apple son el
-ranking de la propia tienda, así que pueden incluir títulos de compra o alquiler.
+Una fila solo existe en el televisor que tiene la app de esa plataforma: con Netflix y
+Prime Video instalados tienes sus cuatro filas, y una plataforma que no usas no se publica
+nunca, así que el lanzador no carga filas que no puedas abrir. Cada tarjeta abre la app de su
+plataforma. Si quitas una app, la siguiente sincronización borra sus filas y dice cuántas.
+Las filas de Apple son el ranking de la propia tienda, así que pueden incluir títulos de
+compra o alquiler.
 
 Se recoge un solo país a la vez, y su nombre va en el título de la fila, en el
 idioma de la pantalla: con Alemania seleccionada las filas dicen **Netflix · Top
@@ -84,9 +84,6 @@ que se comprobó.
 ![La app tras una sincronización](docs/img/app-sync.jpg)
 
 *Una sincronización en la caja: cuatro filas, cuarenta tarjetas, el país en el título de cada fila y la pantalla en el idioma del televisor.*
-
-
-![La app tras una sincronización con las plataformas extra](docs/img/sixteen-rows.jpg)
 
 *Dieciséis filas y 160 tarjetas en un televisor que no tiene ninguna de las apps añadidas:
 cada tarjeta abre la página web de la plataforma en el navegador o la página de la app en la tienda.*

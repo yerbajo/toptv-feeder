@@ -36,11 +36,12 @@ externo*).
 | Filmin · Top series *país* | esta app | JustWatch con el paquete `fil`, ofertas incluidas en la suscripción; su app de TV solo declara sus propios hosts, así que la tarjeta abre Filmin y no el título |
 | Filmin · Top películas *país* | esta app | JustWatch con el paquete `fil`, ofertas incluidas en la suscripción; su app de TV solo declara sus propios hosts, así que la tarjeta abre Filmin y no el título |
 
-Cada tarjeta se resuelve en el dispositivo antes de publicarse: primero el enlace profundo
-de la app, después la propia app, luego la página web de la plataforma en el navegador del
-televisor y por último la página de la app en la tienda. Solo se descarta la tarjeta sin
-ningún destino, así que un televisor al que le falta una de estas apps sigue mostrando el
-ranking en lugar de una fila vacía.
+Una fila existe solo donde existe su app. Antes de publicar, la app pregunta al dispositivo
+si cada plataforma está instalada, no descarga nada de las demás y planifica solo esas filas, así que un televisor sin Max
+no tiene fila de Max y el lanzador no carga nada que la casa no pueda abrir. Después cada
+tarjeta se resuelve en el dispositivo (primero el enlace profundo de la plataforma, después
+el intent de arranque) y la fila de una app que ya no está en el plan se borra como obsoleta
+en la siguiente sincronización, con su recuento en el informe.
 
 
 Se recoge un solo país, y su nombre va en el título de cada fila, en el idioma de la

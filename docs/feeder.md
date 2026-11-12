@@ -35,10 +35,12 @@ optional external source (see *Legacy: an external top.json*).
 | Filmin · Top series *country* | this app | JustWatch with the `fil` package, offers included with the subscription; its TV app claims only its own hosts, so the card opens Filmin, not the title |
 | Filmin · Top películas *country* | this app | JustWatch with the `fil` package, offers included with the subscription; its TV app claims only its own hosts, so the card opens Filmin, not the title |
 
-Every card is resolved on the device before it is published: the platform app's deep
-link first, then the app itself, then the platform's web page in the television's browser,
-then the app's store page. A card with no destination at all is dropped and counted, so a
-TV that lacks one of these apps still shows the ranking instead of an empty row.
+A row exists only where its app exists. Before publishing, the app asks the device whether
+each platform is installed, downloads nothing for the others and plans only those rows, so a television without Max has no Max
+row and the launcher carries nothing the household cannot open. Every card is then resolved
+on the device (the platform's deep link first, the app launch intent second), and a row whose
+app is missing from the plan is deleted as stale on the next sync, with the count in the
+report.
 
 
 One country at a time, and its name is in every row title, in the language of the

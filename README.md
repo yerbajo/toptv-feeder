@@ -41,11 +41,11 @@ the box itself: no PC, no server, no API key and no account.
 | Filmin · Top series *country* | this app | the same JustWatch query with the `fil` package; its TV app only claims its own hosts, so this card opens Filmin rather than the title |
 | Filmin · Top películas *country* | this app | the same JustWatch query with the `fil` package; its TV app only claims its own hosts, so this card opens Filmin rather than the title |
 
-Every card opens its platform's app when that app is installed. The same build runs on
-TVs that lack some of these apps, so a card then opens the platform's web page in the
-television's browser, and when there is no browser it offers the app's store page; only a
-card with no destination at all is dropped, and the sync report counts it. The Apple rows
-are Apple's own store chart, so they can include titles sold rather than streamed.
+A row only exists on a television that has that platform's app: install Netflix and Prime
+Video and you get their four rows, and a platform you do not use is never published, so the
+launcher carries no rows you cannot open. Every card opens the platform app itself. Remove
+an app and the next sync deletes its rows and says how many. The Apple rows are Apple's own
+store chart, so they can include titles sold rather than streamed.
 
 One country at a time, and its name is in the row title, in the language of the
 screen: with Germany selected the rows read **Netflix · Top series Alemania** on a
@@ -79,9 +79,6 @@ records what was checked.
 ![The app after one sync](docs/img/app-sync.jpg)
 
 *One sync on the box: four rows, forty cards, the country in every row title, and the screen in the TV's own language.*
-
-
-![The app after a sync with the extra platforms](docs/img/sixteen-rows.jpg)
 
 *Sixteen rows and 160 cards on a TV that has none of the extra platform apps: each card opens
 the platform's web page in the browser, or the app's store page.*

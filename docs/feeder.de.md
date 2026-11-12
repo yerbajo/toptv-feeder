@@ -37,10 +37,12 @@ top.json*).
 | Filmin · Top series *Land* | diese App | JustWatch mit dem Paket `fil`, im Abo enthaltene Angebote; ihre TV-App kennt nur eigene Hosts, die Karte öffnet Filmin statt des Titels |
 | Filmin · Top películas *Land* | diese App | JustWatch mit dem Paket `fil`, im Abo enthaltene Angebote; ihre TV-App kennt nur eigene Hosts, die Karte öffnet Filmin statt des Titels |
 
-Jede Karte wird vor dem Veröffentlichen auf dem Gerät aufgelöst: zuerst der Deep-Link der
-App, dann die App selbst, danach die Webseite der Plattform im Browser des Fernsehers und
-zuletzt die Store-Seite der App. Nur eine Karte ohne jedes Ziel entfällt, ein Fernseher
-ohne eine dieser Apps zeigt also weiterhin das Ranking statt einer leeren Zeile.
+Eine Zeile existiert nur dort, wo ihre App existiert. Vor dem Veröffentlichen fragt die App
+das Gerät, ob jede Plattform installiert ist, lädt für die anderen nichts herunter und plant nur diese Zeilen: Ein Fernseher ohne
+Max hat keine Max-Zeile, der Launcher trägt also nichts, was der Haushalt nicht öffnen kann.
+Danach wird jede Karte auf dem Gerät aufgelöst (zuerst der Deep-Link, dann der Start-Intent),
+und die Zeile einer App, die nicht mehr im Plan steht, wird beim nächsten Sync als veraltet
+gelöscht, mit Anzahl im Bericht.
 
 
 Immer nur ein Land, und sein Name steht im Titel jeder Zeile, in der Sprache des

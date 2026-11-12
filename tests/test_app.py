@@ -224,11 +224,27 @@ def test_every_platform_row_is_planned():
     # S7: the keep set must hold the new rows too, or a country switch deletes them.
     assert "for (Platform platform : JUSTWATCH_PLATFORMS)" in TOP_SOURCE, (
         "plannedIds must plan every JustWatch platform")
-    assert "appleRowIds(country)" in TOP_SOURCE, "plannedIds must plan the Apple rows"
+    assert "installed.has(APPLE_PACKAGE)" in TOP_SOURCE, (
+        "plannedIds must plan the Apple rows only where the app exists")
+    assert "if (!installed.has(platform.app))" in TOP_SOURCE, (
+        "plannedIds must skip platforms this TV does not have, or stale cleanup keeps them")
     for package in ("com.apple.atve.androidtv.appletv", "com.disney.disneyplus", "com.wbd.stream",
                     "es.plus.yomvi", "com.skyshowtime.skyshowtime.google",
                     "com.filmin.androidtv"):
         assert package in TOP_SOURCE, package
+
+
+def test_absent_platforms_are_never_fetched():
+    # S12: a platform this TV does not have must not even be downloaded, so no row is
+    # built for it and nothing has to be thrown away afterwards.
+    assert "static String fetch(Installed installed" in TOP_SOURCE, (
+        "the on-box fetch must know what is installed")
+    assert "if (installed.has(NETFLIX_PACKAGE))" in TOP_SOURCE
+    assert "if (!installed.has(platform.app))" in TOP_SOURCE, (
+        "a JustWatch platform must be skipped before its request")
+    assert "installed.has(APPLE_PACKAGE)" in TOP_SOURCE, "the Apple charts must be gated too"
+    assert "TopSource.fetch(installedApps(context)" in FEEDER, (
+        "the sync must pass what the device actually has")
 
 
 def test_a_failed_source_keeps_its_row():

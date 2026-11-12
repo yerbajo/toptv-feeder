@@ -184,7 +184,8 @@ public final class Feeder {
         String body;
         try {
             body = url.isEmpty()
-                    ? TopSource.fetch(country, AppLocale.code(context), target(context))
+                    ? TopSource.fetch(installedApps(context), country, AppLocale.code(context),
+                            target(context))
                     : download(url);
         } catch (Exception error) {
             Log.w(TAG, "refresh failed: " + error);
@@ -203,7 +204,7 @@ public final class Feeder {
         saveCache(context, body);
         // The legacy external URL carries no country, so it plans no rows of its own.
         List<String> planned = url.isEmpty()
-                ? TopSource.plannedIds(country)
+                ? TopSource.plannedIds(installedApps(context), country)
                 : new ArrayList<String>();
         Report report = publish(context, rows, planned, source);
         if (report.ok) {
@@ -256,7 +257,7 @@ public final class Feeder {
                     + context.getString(R.string.report_no_valid_rows) + "\n"
                     + context.getString(R.string.report_previous_kept));
         }
-        Report recovered = publish(context, rows, TopSource.plannedIds(Country.saved(context)),
+        Report recovered = publish(context, rows, TopSource.plannedIds(installedApps(context), Country.saved(context)),
                 context.getString(R.string.report_source_cached, source));
         if (recovered.ok) {
             prefs(context).edit().putBoolean(PREF_PUBLISHED, true).apply();
@@ -435,9 +436,18 @@ public final class Feeder {
         int items = 0;
         int degraded = 0;
         int errors = 0;
+        int skipped = 0;
 
         List<Row> publishable = new ArrayList<Row>();
         for (Row row : rows) {
+            // S12: only rows whose app is installed. Another TV in the house may have
+            // it, so the row is skipped here and named in the report, not degraded.
+            if (!row.app.isEmpty() && !installed(context, row.app)) {
+                skipped++;
+                text.append(context.getString(R.string.report_row_skipped,
+                        row.channelId.isEmpty() ? "?" : row.channelId, row.app)).append('\n');
+                continue;
+            }
             row.resolve(context); // S3a: a card that opens nothing is never published
             String problem = row.problem();
             if (problem == null) {
@@ -514,6 +524,9 @@ public final class Feeder {
         String head = context.getString(
                 ok ? R.string.report_published : R.string.report_nothing,
                 published, items, degraded, errors);
+        if (skipped > 0) {
+            head = head + "\n" + context.getString(R.string.report_skipped, skipped);
+        }
         if (stale > 0) {
             head = head + "\n" + context.getString(R.string.report_stale_rows, stale);
         }
@@ -683,6 +696,26 @@ public final class Feeder {
         return -1;
     }
 
+    /** The device's answer to "is this app here", for planning and for skipping rows. */
+    private static TopSource.Installed installedApps(final Context context) {
+        return new TopSource.Installed() {
+            @Override
+            public boolean has(String app) {
+                return installed(context, app);
+            }
+        };
+    }
+
+    /** Whether this TV has the app, which decides if its row exists at all (S12). */
+    private static boolean installed(Context context, String app) {
+        try {
+            context.getPackageManager().getPackageInfo(app, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException missing) {
+            return false;
+        }
+    }
+
     private static String emptyToNull(String value) {
         return value.isEmpty() ? null : value;
     }
@@ -691,10 +724,9 @@ public final class Feeder {
      * The intent URI for one card, resolved on this device (S3a).
      *
      * A package-pinned data intent only resolves when the app registers a filter for
-     * that exact link. The deep link is tried first, the app launch intent second, and
-     * because the same build runs on TVs that do not have every app, a card then falls
-     * back to the platform's web page in a browser and finally to the app's store page,
-     * so a row still shows its ranking. Null means this card opens nothing at all.
+     * that exact link. The deep link is tried first and the app launch intent second,
+     * so a card always opens the platform app itself; a row whose app is not installed
+     * is not published at all (S12), which keeps every card honest.
      */
     private static String cardIntent(Context context, Row row, Item item) {
         PackageManager manager = context.getPackageManager();
@@ -710,64 +742,12 @@ public final class Feeder {
             intent = resolved(manager, manager.getLaunchIntentForPackage(row.app));
         }
         if (intent == null) {
-            intent = webIntent(manager, item.link);
-        }
-        if (intent == null && !row.app.isEmpty()) {
-            intent = storeIntent(manager, row.app);
-        }
-        if (intent == null) {
             return null;
         }
         // A launcher keys a card on this URI: the title keeps ten cards of one app
         // apart, and the target app ignores the extra.
         intent.putExtra(CARD_TITLE, item.title);
         return intent.toUri(Intent.URI_INTENT_SCHEME);
-    }
-
-    /**
-     * The card's page in a browser, pinned to the browser itself.
-     *
-     * Unpinned it would be claimed by any installed app with a loose https filter
-     * (SkyShowtime registers https with no host), so the browser is chosen first and
-     * the intent is pinned to it.
-     */
-    private static Intent webIntent(PackageManager manager, String link) {
-        if (link.isEmpty() || !link.startsWith("http")) {
-            return null;
-        }
-        String browser = browserPackage(manager);
-        if (browser.isEmpty()) {
-            return null;
-        }
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-        intent.setPackage(browser);
-        return resolved(manager, intent);
-    }
-
-    /** The app's store page, so a TV without the app can install it. */
-    private static Intent storeIntent(PackageManager manager, String app) {
-        Intent intent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("market://details?id=" + app));
-        intent = resolved(manager, intent);
-        if (intent != null) {
-            return intent;
-        }
-        return webIntent(manager, "https://play.google.com/store/apps/details?id=" + app);
-    }
-
-    /** The first package that handles a plain http page, which is a browser. */
-    private static String browserPackage(PackageManager manager) {
-        Intent probe = new Intent(Intent.ACTION_VIEW, Uri.parse("http://example.com"));
-        List<ResolveInfo> handlers = manager.queryIntentActivities(probe, PackageManager.MATCH_DEFAULT_ONLY);
-        if (handlers == null) {
-            return "";
-        }
-        for (ResolveInfo handler : handlers) {
-            if (handler.activityInfo != null && handler.activityInfo.packageName != null) {
-                return handler.activityInfo.packageName;
-            }
-        }
-        return "";
     }
 
     /** The same intent pointed at the activity that handles it, if any. */

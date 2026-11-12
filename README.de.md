@@ -43,11 +43,12 @@ ohne Server, ohne API-Schlüssel und ohne Konto.
 | Filmin · Top series *Land* | diese App | dieselbe JustWatch-Abfrage mit dem Paket `fil`; ihre TV-App kennt nur eigene Hosts, die Karte öffnet also Filmin statt des Titels |
 | Filmin · Top películas *Land* | diese App | dieselbe JustWatch-Abfrage mit dem Paket `fil`; ihre TV-App kennt nur eigene Hosts, die Karte öffnet also Filmin statt des Titels |
 
-Jede Karte öffnet die App ihrer Plattform, wenn sie installiert ist. Derselbe Build läuft
-auf Fernsehern, denen einige dieser Apps fehlen: Die Karte öffnet dann die Webseite der
-Plattform im Browser des Fernsehers und bietet ohne Browser die Store-Seite der App an;
-nur eine Karte ohne jedes Ziel entfällt, und der Sync-Bericht zählt sie. Die Apple-Zeilen
-sind Apples eigener Store-Chart und können daher auch Kauf- und Leih-Titel enthalten.
+Eine Zeile existiert nur auf dem Fernseher, der die App dieser Plattform hat: mit Netflix
+und Prime Video gibt es deren vier Zeilen, und eine Plattform, die Sie nicht nutzen, wird nie
+veröffentlicht, der Launcher trägt also keine Zeilen, die Sie nicht öffnen können. Jede
+Karte öffnet die App ihrer Plattform. Entfernen Sie eine App, löscht der nächste Sync ihre
+Zeilen und nennt die Anzahl. Die Apple-Zeilen sind Apples eigener Store-Chart und können
+daher auch Kauf- und Leih-Titel enthalten.
 
 Immer nur ein Land, und sein Name steht im Titel der Zeile, in der Sprache des
 Bildschirms: mit Deutschland lesen sich die Zeilen **Netflix · Top series Alemania**
@@ -82,9 +83,6 @@ Prime-Quelle: [feeder.de.md](docs/feeder.de.md) hält fest, was geprüft wurde.
 ![Die App nach einer Synchronisierung](docs/img/app-sync.jpg)
 
 *Eine Synchronisierung auf der Box: vier Reihen, vierzig Karten, das Land in jedem Zeilentitel, und der Bildschirm in der Sprache des Fernsehers.*
-
-
-![Die App nach einem Sync mit den zusätzlichen Plattformen](docs/img/sixteen-rows.jpg)
 
 *Sechzehn Zeilen und 160 Karten auf einem Fernseher ohne eine dieser Apps: Jede Karte öffnet
 die Webseite der Plattform im Browser oder die Store-Seite der App.*

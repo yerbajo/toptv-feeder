@@ -189,19 +189,14 @@ def test_activity_accepts_an_empty_url():
     assert "url_missing" not in activity, "an empty URL now means the built-in sources (S2)"
 
 
-def test_a_card_without_the_app_still_opens_something():
-    # The same build runs on TVs that lack a given app, so a card falls back to the
-    # platform's web page and then to its store page instead of disappearing.
+def test_rows_without_their_app_are_skipped_not_faked():
+    # S12: the same build ships to several TVs, and a row only exists where its app
+    # is installed. No web page and no store page stand in for a missing app.
     feeder = FEEDER.read_text(encoding="utf-8")
-    order = [feeder.index("intent.setPackage(row.app);"),
-             feeder.index("manager.getLaunchIntentForPackage(row.app)"),
-             feeder.index("webIntent(manager, item.link)"),
-             feeder.index("storeIntent(manager, row.app)")]
-    assert order == sorted(order), "the fallbacks must keep their order"
-    assert "market://details?id=" in feeder, "a TV without the app must be able to install it"
-    assert "intent.setPackage(browser)" in feeder, (
-        "the web fallback must be pinned to the browser, or a loose filter claims it"
-    )
+    assert "installed(context, row.app)" in feeder, "a row must check that its app is here"
+    assert "report_row_skipped" in feeder, "the report must say which rows were skipped"
+    assert "webIntent(" not in feeder, "a missing app must not fall back to a browser"
+    assert "market://details" not in feeder, "a missing app must not fall back to the store"
 
 
 def test_card_intent_code_paths():

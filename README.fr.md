@@ -44,12 +44,12 @@ lui-même : sans PC, sans serveur, sans clé d'API et sans compte.
 | Filmin · Top series *pays* | cette application | la même requête JustWatch avec le paquet `fil` ; son application TV ne déclare que ses propres hôtes, la carte ouvre donc Filmin et non le titre |
 | Filmin · Top películas *pays* | cette application | la même requête JustWatch avec le paquet `fil` ; son application TV ne déclare que ses propres hôtes, la carte ouvre donc Filmin et non le titre |
 
-Chaque carte ouvre l'application de sa plateforme quand elle est installée. La même
-compilation tourne sur des téléviseurs auxquels il manque certaines de ces applications :
-la carte ouvre alors la page web de la plateforme dans le navigateur du téléviseur et, sans
-navigateur, propose la page de l'application dans la boutique ; seule une carte sans aucune
-destination est écartée, et le rapport de synchronisation la compte. Les lignes Apple
-viennent du classement de la boutique Apple : elles peuvent donc inclure des titres à
+Une ligne n'existe que sur le téléviseur qui possède l'application de la plateforme : avec
+Netflix et Prime Video installés, vous avez leurs quatre lignes, et une plateforme que vous
+n'utilisez pas n'est jamais publiée, donc le lanceur ne porte aucune ligne que vous ne
+puissiez ouvrir. Chaque carte ouvre l'application de sa plateforme. Si vous retirez une
+application, la synchronisation suivante supprime ses lignes et dit combien. Les lignes
+Apple viennent du classement de la boutique Apple : elles peuvent donc inclure des titres à
 acheter ou à louer.
 
 Un seul pays à la fois, et son nom figure dans le titre de la rangée, dans la langue
@@ -85,9 +85,6 @@ la source Prime : [feeder.fr.md](docs/feeder.fr.md) détaille ce qui a été vé
 ![L'app après une synchronisation](docs/img/app-sync.jpg)
 
 *Une synchronisation sur le boîtier : quatre rangées, quarante cartes, le pays dans le titre de chaque rangée, et l'écran dans la langue du téléviseur.*
-
-
-![L'application après une synchronisation avec les plateformes ajoutées](docs/img/sixteen-rows.jpg)
 
 *Seize lignes et 160 cartes sur un téléviseur qui n'a aucune des applications ajoutées : chaque
 carte ouvre la page web de la plateforme dans le navigateur, ou la page de l'application dans la boutique.*

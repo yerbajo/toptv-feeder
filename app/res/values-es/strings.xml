@@ -42,6 +42,8 @@
     <string name="report_opens">  abre: %1$s</string>
     <string name="report_notice">  aviso: %1$s</string>
     <string name="report_row_error">- error %1$s: %2$s</string>
+    <string name="report_row_skipped">- omitida %1$s: %2$s no está instalada</string>
+    <string name="report_skipped">%1$d filas omitidas: su app no está instalada en este televisor</string>
     <string name="report_no_valid_rows">No se publicó nada: ninguna fila válida</string>
     <string name="report_previous_kept">Las filas anteriores siguen intactas (S5).</string>
     <string name="report_refresh_failed">Fallo al actualizar %1$s: %2$s</string>

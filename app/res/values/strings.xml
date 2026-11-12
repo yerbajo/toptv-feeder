@@ -42,6 +42,8 @@
     <string name="report_opens">  opens: %1$s</string>
     <string name="report_notice">  notice: %1$s</string>
     <string name="report_row_error">- error %1$s: %2$s</string>
+    <string name="report_row_skipped">- skipped %1$s: %2$s is not installed</string>
+    <string name="report_skipped">%1$d rows skipped: their app is not installed on this TV</string>
     <string name="report_no_valid_rows">Nothing published: no valid rows</string>
     <string name="report_previous_kept">Previous rows left untouched (S5).</string>
     <string name="report_refresh_failed">FAILED refresh of %1$s: %2$s</string>
