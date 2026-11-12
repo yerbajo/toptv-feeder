@@ -50,8 +50,8 @@ Synchronisationsbericht zählt sie.
 ## Bauen und manuell installieren
 
 ```bash
-bash tools/build-apk.sh                                  # app/build/tvfeeder.apk
-adb install -r app/build/tvfeeder.apk
+bash tools/build-apk.sh                                  # app/build/toptv-feeder.apk
+adb install -r app/build/toptv-feeder.apk
 adb shell am start -n com.alberto.tvfeeder/.MainActivity
 ```
 
@@ -59,7 +59,7 @@ Lassen Sie danach das URL-Feld **leer**, drücken Sie auf **Sync** und bestätig
 Sie den Dialog für die TV-Listings. Die Zeilen erscheinen im Launcher, der den TV
 Provider liest; in Projectivy müssen zuerst dessen eigene Kanäle aktiviert werden.
 
-Ohne ADB kopieren Sie `app/build/tvfeeder.apk` auf einen USB-Stick, erlauben
+Ohne ADB kopieren Sie `app/build/toptv-feeder.apk` auf einen USB-Stick, erlauben
 unbekannte Quellen für den Dateimanager des Fernsehers und installieren die App
 von dort.
 

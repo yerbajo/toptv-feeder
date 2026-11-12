@@ -48,8 +48,8 @@ enlace no resuelve no se publica, y el informe de sincronización la cuenta.
 ## Compilar e instalar manualmente
 
 ```bash
-bash tools/build-apk.sh                                  # app/build/tvfeeder.apk
-adb install -r app/build/tvfeeder.apk
+bash tools/build-apk.sh                                  # app/build/toptv-feeder.apk
+adb install -r app/build/toptv-feeder.apk
 adb shell am start -n com.alberto.tvfeeder/.MainActivity
 ```
 
@@ -57,7 +57,7 @@ Después deja el campo de URL **vacío**, pulsa **Sync** y acepta el diálogo de
 listados de TV. Las filas aparecen en el lanzador que lee el TV Provider; en
 Projectivy hay que habilitar antes sus propios canales.
 
-Sin ADB, copia `app/build/tvfeeder.apk` a un lápiz USB, permite orígenes
+Sin ADB, copia `app/build/toptv-feeder.apk` a un lápiz USB, permite orígenes
 desconocidos para el gestor de archivos del televisor e instálala desde ahí.
 
 El documento se guarda en caché en `files/last_good.json`, dentro del directorio

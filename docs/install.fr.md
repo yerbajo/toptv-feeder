@@ -16,7 +16,7 @@ synchronisation. Le reste de l'application est décrit dans
 | Réseau | l'appareil sur le même réseau que votre PC pendant l'installation. Ensuite, il n'a besoin que d'HTTPS vers `www.netflix.com` et `apis.justwatch.com` |
 | PC, uniquement pour compiler | le SDK Android **build-tools 34.0.0** et **platforms/android-34** ; `javac`, `keytool` et `zip` dans le `PATH` |
 
-Un `app/build/tvfeeder.apk` déjà compilé ne demande aucun PC.
+Un `app/build/toptv-feeder.apk` déjà compilé ne demande aucun PC.
 
 ## 2. Compiler l'APK
 
@@ -33,7 +33,7 @@ TVFEEDER_ANDROID_JAR=/opt/android/platforms/android-34/android.jar \
 bash tools/build-apk.sh
 ```
 
-La sortie est `app/build/tvfeeder.apk`. Avant d'annoncer le succès, le script
+La sortie est `app/build/toptv-feeder.apk`. Avant d'annoncer le succès, le script
 contrôle le fichier produit : `aapt2 dump badging` pour le nom de paquet
 `com.alberto.tvfeeder`, `sdkVersion` et `targetSdkVersion` 28, les permissions
 `INTERNET`, `READ_TV_LISTINGS`, `RECEIVE_BOOT_COMPLETED`, `READ_EPG_DATA` et
@@ -50,7 +50,7 @@ debugging** (ou **Network debugging**) et acceptez l'invite RSA sur le télévis
 
 ```bash
 adb connect <BOX_IP>:5555
-adb install -r app/build/tvfeeder.apk
+adb install -r app/build/toptv-feeder.apk
 adb shell am start -n com.alberto.tvfeeder/.MainActivity
 ```
 
@@ -60,14 +60,14 @@ puis débranchez.
 
 ## 4. Installer sans ADB
 
-Copiez `app/build/tvfeeder.apk` sur une clé USB et branchez-la au téléviseur, ou
+Copiez `app/build/toptv-feeder.apk` sur une clé USB et branchez-la au téléviseur, ou
 servez le fichier depuis le PC :
 
 ```bash
 cd app/build && python3 -m http.server 8000
 ```
 
-Sur le téléviseur, ouvrez `http://<PC_IP>:8000/tvfeeder.apk` avec le gestionnaire de
+Sur le téléviseur, ouvrez `http://<PC_IP>:8000/toptv-feeder.apk` avec le gestionnaire de
 fichiers ou avec l'application **Downloader**, autorisez les sources inconnues pour
 cette application (`Settings > Security & restrictions > Unknown sources`), puis
 installez.

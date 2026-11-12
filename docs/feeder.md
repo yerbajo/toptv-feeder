@@ -53,7 +53,7 @@ python3 tools/fetch_top.py --out top.json      # same rows, built on a PC
 
 The box needs no PC and no URL:
 
-1. `adb install -r app/build/tvfeeder.apk`
+1. `adb install -r app/build/toptv-feeder.apk`
 2. `adb shell am start -n com.alberto.tvfeeder/.MainActivity`
 3. Leave the URL field **empty**, press **Sync** and accept the
    `READ_TV_LISTINGS` dialog.
@@ -75,7 +75,7 @@ Setup on a real TV, stick or box, with screenshots: [install.md](install.md).
 
 1. `Settings > Device Preferences > Security & restrictions > Unknown sources`
    and allow it for the app you will download with.
-2. Copy `app/build/tvfeeder.apk` to a USB stick, or serve it from any machine
+2. Copy `app/build/toptv-feeder.apk` to a USB stick, or serve it from any machine
    that is already on the LAN, and install it from there.
 3. Open **TV Feeder**, leave the URL empty, press **Sync**.
 

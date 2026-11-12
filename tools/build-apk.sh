@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds app/build/tvfeeder.apk with the local Android SDK.
+# Builds app/build/toptv-feeder.apk with the local Android SDK.
 # No Gradle, no network: aapt2, javac, d8, zip, zipalign, apksigner.
 set -euo pipefail
 
@@ -14,7 +14,7 @@ APKSIGNER="$BUILD_TOOLS/apksigner"
 
 APP="$ROOT/app"
 BUILD="$APP/build"
-OUT="$BUILD/tvfeeder.apk"
+OUT="$BUILD/toptv-feeder.apk"
 KEYSTORE="$BUILD/debug.keystore"
 
 die() {

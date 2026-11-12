@@ -47,8 +47,8 @@ nothing is not published, and the sync report counts it.
 ## Build and sideload
 
 ```bash
-bash tools/build-apk.sh                                  # app/build/tvfeeder.apk
-adb install -r app/build/tvfeeder.apk
+bash tools/build-apk.sh                                  # app/build/toptv-feeder.apk
+adb install -r app/build/toptv-feeder.apk
 adb shell am start -n com.alberto.tvfeeder/.MainActivity
 ```
 
@@ -56,7 +56,7 @@ Then leave the URL field **empty**, press **Sync** and accept the TV listings
 dialog. The rows appear in the launcher that reads the TV Provider; in Projectivy
 its own channels have to be enabled first.
 
-Without ADB, copy `app/build/tvfeeder.apk` to a USB stick, allow unknown sources
+Without ADB, copy `app/build/toptv-feeder.apk` to a USB stick, allow unknown sources
 for the file manager on the TV, and install it from there.
 
 The document is cached in `files/last_good.json` inside the app's private data

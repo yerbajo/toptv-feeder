@@ -59,7 +59,7 @@ python3 tools/fetch_top.py --out top.json      # same rows, built on a PC
 
 Le boîtier n'a besoin ni de PC ni d'URL :
 
-1. `adb install -r app/build/tvfeeder.apk`
+1. `adb install -r app/build/toptv-feeder.apk`
 2. `adb shell am start -n com.alberto.tvfeeder/.MainActivity`
 3. Laissez le champ URL **vide**, appuyez sur **Sync** et acceptez la boîte de
    dialogue `READ_TV_LISTINGS`.
@@ -83,7 +83,7 @@ Installation sur un téléviseur, une clé ou un boîtier réel, avec captures :
 
 1. `Settings > Device Preferences > Security & restrictions > Unknown sources` et
    autorisez-le pour l'application avec laquelle vous allez télécharger.
-2. Copiez `app/build/tvfeeder.apk` sur une clé USB, ou servez-le depuis n'importe
+2. Copiez `app/build/toptv-feeder.apk` sur une clé USB, ou servez-le depuis n'importe
    quelle machine déjà présente sur le réseau local, et installez-le depuis là.
 3. Ouvrez **TV Feeder**, laissez l'URL vide, appuyez sur **Sync**.
 
