@@ -84,12 +84,23 @@ def test_parse_justwatch_listing_shape():
     # and to the Prime offers, so the shape is the real one.
     movie = json.loads((FIX / "justwatch-movie-es.json").read_text(encoding="utf-8"))
     items = ft.parse_justwatch_listing(movie)
-    assert [i["title"] for i in items] == ["Proyecto Salvación", "Normal", "El amor de tu vida"], items
+    assert [i["title"] for i in items] == ["Proyecto Salvación", "El amor de tu vida", "Normal"], items
     assert items[0]["poster"].startswith("https://images.justwatch.com/poster/"), items[0]["poster"]
     assert "{profile}" not in items[0]["poster"] and "{format}" not in items[0]["poster"]
-    assert items[0]["poster"].endswith("/s332/proyecto-salvacion.jpg"), items[0]["poster"]
+    assert items[0]["poster"].endswith("/s592/proyecto-salvacion.jpg"), items[0]["poster"]
     # JustWatch hands out the exact Prime deep link for the title.
     assert items[0]["link"].startswith("https://app.primevideo.com/detail?gti=amzn1.dv.gti."), items[0]["link"]
+    # The card is 16:9, so the landscape still is the card image and the portrait
+    # poster stays as poster art; a listing without backdrops falls back to it.
+    assert items[0]["thumb"].startswith("https://images.justwatch.com/backdrop/"), items[0]["thumb"]
+    assert items[0]["thumb"].endswith("/s480/proyecto-salvacion.jpg"), items[0]["thumb"]
+
+
+def test_parse_justwatch_listing_falls_back_to_the_poster():
+    movie = json.loads((FIX / "justwatch-movie-es.json").read_text(encoding="utf-8"))
+    for edge in movie["data"]["popularTitles"]["edges"]:
+        edge["node"]["content"].pop("backdrops", None)
+    items = ft.parse_justwatch_listing(movie)
     assert items[0]["thumb"] == items[0]["poster"], "the card image falls back to the poster"
 
 

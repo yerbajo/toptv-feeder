@@ -43,7 +43,8 @@ JW_QUERY = (
     "query P($country: Country!, $language: Language!, $first: Int!, $objectType: ObjectType!) {"
     " popularTitles(country: $country, first: $first, sortBy: POPULAR, sortRandomSeed: 0,"
     ' filter: {objectTypes: [$objectType], packages: ["prv"]}) {'
-    " edges { node { content(country: $country, language: $language) { title posterUrl }"
+    " edges { node { content(country: $country, language: $language)"
+    " { title posterUrl backdrops { backdropUrl } }"
     " offers(country: $country, platform: WEB)"
     " { monetizationType standardWebURL package { shortName } } } } } }"
 )
@@ -242,22 +243,36 @@ def parse_justwatch_listing(payload, max_items=10):
         name = (content.get("title") or "").strip()
         if not name:
             continue
-        poster = content.get("posterUrl") or ""
-        if poster:
-            poster = JUSTWATCH_POSTER + poster.replace("{profile}", "s332").replace("{format}", "jpg")
+        poster = justwatch_image(content.get("posterUrl") or "", "s592")
         items.append(
             {
                 "title": name,
                 "poster": poster,
-                # JustWatch exposes no backdrop, and the app counts a missing
-                # thumb as degraded artwork; the poster doubles as the card image.
-                "thumb": poster,
+                # The card is 16:9 and the poster is 2:3, so the landscape still is
+                # the card image; without one the poster doubles as the thumb.
+                "thumb": first_backdrop(content.get("backdrops")) or poster,
                 "link": prime_link(node.get("offers") or []),
             }
         )
         if len(items) >= max_items:
             break
     return items
+
+
+def justwatch_image(path, profile):
+    """A JustWatch image URL with its {profile}/{format} template filled in."""
+    if not path:
+        return ""
+    return JUSTWATCH_POSTER + path.replace("{profile}", profile).replace("{format}", "jpg")
+
+
+def first_backdrop(backdrops):
+    """The landscape still for the card, or "" when the listing has none."""
+    for entry in backdrops or []:
+        url = justwatch_image((entry or {}).get("backdropUrl") or "", "s480")
+        if url:
+            return url
+    return ""
 
 
 def prime_link(offers):

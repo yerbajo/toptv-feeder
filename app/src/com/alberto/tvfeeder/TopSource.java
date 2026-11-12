@@ -55,7 +55,8 @@ final class TopSource {
             "query P($country: Country!, $language: Language!, $first: Int!, $objectType: ObjectType!) {"
                     + " popularTitles(country: $country, first: $first, sortBy: POPULAR, sortRandomSeed: 0,"
                     + " filter: {objectTypes: [$objectType], packages: [\"prv\"]}) {"
-                    + " edges { node { content(country: $country, language: $language) { title posterUrl }"
+                    + " edges { node { content(country: $country, language: $language)"
+                    + " { title posterUrl backdrops { backdropUrl } }"
                     + " offers(country: $country, platform: WEB)"
                     + " { monetizationType standardWebURL package { shortName } } } } } }";
 
@@ -364,15 +365,14 @@ final class TopSource {
             if (name.isEmpty()) {
                 continue;
             }
-            String poster = content.optString("posterUrl", "");
-            if (!poster.isEmpty()) {
-                poster = JUSTWATCH_IMAGE + poster.replace("{profile}", "s332").replace("{format}", "jpg");
-            }
+            String poster = image(content.optString("posterUrl", ""), "s592");
             JSONObject item = new JSONObject();
             item.put("title", name);
             item.put("poster", poster);
-            // JustWatch exposes no backdrop; a missing thumb would count as degraded art.
-            item.put("thumb", poster);
+            // The card is 16:9 and the poster is 2:3, so the landscape still is the
+            // card image; without one the poster doubles as the thumb.
+            String thumb = firstBackdrop(content.optJSONArray("backdrops"));
+            item.put("thumb", thumb.isEmpty() ? poster : thumb);
             item.put("link", primeLink(node.optJSONArray("offers")));
             items.put(item);
         }
@@ -388,6 +388,26 @@ final class TopSource {
         row.put("items", items);
         row.put("notices", new JSONArray());
         return row;
+    }
+
+    /** A JustWatch image URL with its {profile}/{format} template filled in. */
+    private static String image(String path, String profile) {
+        if (path == null || path.isEmpty()) {
+            return "";
+        }
+        return JUSTWATCH_IMAGE + path.replace("{profile}", profile).replace("{format}", "jpg");
+    }
+
+    /** The landscape still for the card, or "" when the listing has none. */
+    private static String firstBackdrop(JSONArray backdrops) {
+        for (int i = 0; backdrops != null && i < backdrops.length(); i++) {
+            JSONObject entry = backdrops.optJSONObject(i);
+            String url = entry == null ? "" : image(entry.optString("backdropUrl", ""), "s480");
+            if (!url.isEmpty()) {
+                return url;
+            }
+        }
+        return "";
     }
 
     /** The Prime deep link carried by an included offer, or "" when none has one. */

@@ -6,9 +6,52 @@
      "node": {
       "content": {
        "title": "Tierra de mafiosos",
-       "posterUrl": "/poster/355511816/{profile}/mobland.{format}"
+       "posterUrl": "/poster/355511816/{profile}/mobland.{format}",
+       "backdrops": [
+        {
+         "backdropUrl": "/backdrop/328945489/{profile}/mobland.{format}"
+        },
+        {
+         "backdropUrl": "/backdrop/355145309/{profile}/mobland.{format}"
+        }
+       ]
       },
       "offers": [
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://www.skyshowtime.com/es/stream/tv/tierra-de-mafiosos/12e9e904-d7dc-3f84-b362-7287cf837b90/seasons/1/episodes/stick-or-twist-episode-1/2f8f3980-e88f-3a01-b726-dfedb196a30b",
+        "package": {
+         "shortName": "sst"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://www.skyshowtime.com/es/stream/tv/tierra-de-mafiosos/12e9e904-d7dc-3f84-b362-7287cf837b90/seasons/1/episodes/stick-or-twist-episode-1/2f8f3980-e88f-3a01-b726-dfedb196a30b",
+        "package": {
+         "shortName": "sst"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://www.skyshowtime.com/es/stream/tv/tierra-de-mafiosos/12e9e904-d7dc-3f84-b362-7287cf837b90/seasons/1/episodes/stick-or-twist-episode-1/2f8f3980-e88f-3a01-b726-dfedb196a30b",
+        "package": {
+         "shortName": "sst"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.6c164b71-8ceb-4b19-957f-79a1b6c5c4a8",
+        "package": {
+         "shortName": "sml"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.6c164b71-8ceb-4b19-957f-79a1b6c5c4a8",
+        "package": {
+         "shortName": "sml"
+        }
+       },
        {
         "monetizationType": "FLATRATE",
         "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.6c164b71-8ceb-4b19-957f-79a1b6c5c4a8",
@@ -21,6 +64,48 @@
         "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.6c164b71-8ceb-4b19-957f-79a1b6c5c4a8",
         "package": {
          "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "http://wl.movistarplus.es/ficha/?id=4397942&utm_source=justwatch&utm_medium=aggregator&utm_campaign=product_feed",
+        "package": {
+         "shortName": "mvs"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "http://wl.movistarplus.es/ficha/?id=4397942&utm_source=justwatch&utm_medium=aggregator&utm_campaign=product_feed",
+        "package": {
+         "shortName": "mvs"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.6c164b71-8ceb-4b19-957f-79a1b6c5c4a8",
+        "package": {
+         "shortName": "pva"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.6c164b71-8ceb-4b19-957f-79a1b6c5c4a8",
+        "package": {
+         "shortName": "pva"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.5e64115c-7459-4f4c-a9c9-9643e1bfa49f",
+        "package": {
+         "shortName": "amz"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.5e64115c-7459-4f4c-a9c9-9643e1bfa49f",
+        "package": {
+         "shortName": "amz"
         }
        }
       ]
@@ -30,7 +115,12 @@
      "node": {
       "content": {
        "title": "Carrie",
-       "posterUrl": "/poster/350899399/{profile}/carrie.{format}"
+       "posterUrl": "/poster/350899399/{profile}/carrie.{format}",
+       "backdrops": [
+        {
+         "backdropUrl": "/backdrop/350899417/{profile}/carrie.{format}"
+        }
+       ]
       },
       "offers": [
        {
@@ -45,6 +135,27 @@
         "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.66ebe2ae-822e-489e-a61b-df0daa550051",
         "package": {
          "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.66ebe2ae-822e-489e-a61b-df0daa550051",
+        "package": {
+         "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.66ebe2ae-822e-489e-a61b-df0daa550051",
+        "package": {
+         "shortName": "pva"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.66ebe2ae-822e-489e-a61b-df0daa550051",
+        "package": {
+         "shortName": "pva"
         }
        }
       ]
@@ -54,7 +165,15 @@
      "node": {
       "content": {
        "title": "La Lista Final",
-       "posterUrl": "/poster/317532028/{profile}/the-terminal-list.{format}"
+       "posterUrl": "/poster/317532028/{profile}/the-terminal-list.{format}",
+       "backdrops": [
+        {
+         "backdropUrl": "/backdrop/288444687/{profile}/the-terminal-list.{format}"
+        },
+        {
+         "backdropUrl": "/backdrop/284789992/{profile}/the-terminal-list.{format}"
+        }
+       ]
       },
       "offers": [
        {
@@ -69,6 +188,27 @@
         "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.0c17249c-bd78-474d-9fe7-91edf9b71dfa",
         "package": {
          "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.0c17249c-bd78-474d-9fe7-91edf9b71dfa",
+        "package": {
+         "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.0c17249c-bd78-474d-9fe7-91edf9b71dfa",
+        "package": {
+         "shortName": "pva"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.0c17249c-bd78-474d-9fe7-91edf9b71dfa",
+        "package": {
+         "shortName": "pva"
         }
        }
       ]

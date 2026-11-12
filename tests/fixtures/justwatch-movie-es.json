@@ -6,7 +6,15 @@
      "node": {
       "content": {
        "title": "Proyecto Salvación",
-       "posterUrl": "/poster/332605837/{profile}/proyecto-salvacion.{format}"
+       "posterUrl": "/poster/332605837/{profile}/proyecto-salvacion.{format}",
+       "backdrops": [
+        {
+         "backdropUrl": "/backdrop/341930956/{profile}/proyecto-salvacion.{format}"
+        },
+        {
+         "backdropUrl": "/backdrop/332529663/{profile}/proyecto-salvacion.{format}"
+        }
+       ]
       },
       "offers": [
        {
@@ -22,29 +30,159 @@
         "package": {
          "shortName": "prv"
         }
-       }
-      ]
-     }
-    },
-    {
-     "node": {
-      "content": {
-       "title": "Normal",
-       "posterUrl": "/poster/345751629/{profile}/normal-2026.{format}"
-      },
-      "offers": [
+       },
        {
         "monetizationType": "FLATRATE",
-        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.414eb1af-ee27-476c-bc46-bedd48595f59",
         "package": {
          "shortName": "prv"
         }
        },
        {
-        "monetizationType": "FLATRATE",
-        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "monetizationType": "CINEMA",
+        "standardWebURL": "https://kinepolis.es/movies/detail/39453/HO00006747/0/ramayana",
         "package": {
-         "shortName": "prv"
+         "shortName": "kin"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.414eb1af-ee27-476c-bc46-bedd48595f59",
+        "package": {
+         "shortName": "mgp"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.414eb1af-ee27-476c-bc46-bedd48595f59",
+        "package": {
+         "shortName": "pva"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.414eb1af-ee27-476c-bc46-bedd48595f59",
+        "package": {
+         "shortName": "pva"
+        }
+       },
+       {
+        "monetizationType": "RENT",
+        "standardWebURL": "https://tv.apple.com/es/movie/proyecto-salvacion/umc.cmc.7jxdlxvz304lj3iwhtrhbe8fv?at=1000l3V2&ct=app_tv&itscg=30200&itsct=justwatch_tv&playableId=tvs.sbd.9001%3A1880810604",
+        "package": {
+         "shortName": "itu"
+        }
+       },
+       {
+        "monetizationType": "RENT",
+        "standardWebURL": "https://tv.apple.com/es/movie/proyecto-salvacion/umc.cmc.7jxdlxvz304lj3iwhtrhbe8fv?at=1000l3V2&ct=app_tv&itscg=30200&itsct=justwatch_tv&playableId=tvs.sbd.9001%3A1880810604",
+        "package": {
+         "shortName": "itu"
+        }
+       },
+       {
+        "monetizationType": "RENT",
+        "standardWebURL": "https://tv.apple.com/es/movie/proyecto-salvacion/umc.cmc.7jxdlxvz304lj3iwhtrhbe8fv?at=1000l3V2&ct=app_tv&itscg=30200&itsct=justwatch_tv&playableId=tvs.sbd.9001%3A1880810604",
+        "package": {
+         "shortName": "itu"
+        }
+       },
+       {
+        "monetizationType": "RENT",
+        "standardWebURL": "https://www.rakuten.tv/es/movies/proyecto-salvacion",
+        "package": {
+         "shortName": "wki"
+        }
+       },
+       {
+        "monetizationType": "RENT",
+        "standardWebURL": "https://www.rakuten.tv/es/movies/proyecto-salvacion",
+        "package": {
+         "shortName": "wki"
+        }
+       },
+       {
+        "monetizationType": "RENT",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.414eb1af-ee27-476c-bc46-bedd48595f59",
+        "package": {
+         "shortName": "amz"
+        }
+       },
+       {
+        "monetizationType": "RENT",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.414eb1af-ee27-476c-bc46-bedd48595f59",
+        "package": {
+         "shortName": "amz"
+        }
+       },
+       {
+        "monetizationType": "RENT",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.414eb1af-ee27-476c-bc46-bedd48595f59",
+        "package": {
+         "shortName": "amz"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://tv.apple.com/es/movie/proyecto-salvacion/umc.cmc.7jxdlxvz304lj3iwhtrhbe8fv?at=1000l3V2&ct=app_tv&itscg=30200&itsct=justwatch_tv&playableId=tvs.sbd.9001%3A1880810604",
+        "package": {
+         "shortName": "itu"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://tv.apple.com/es/movie/proyecto-salvacion/umc.cmc.7jxdlxvz304lj3iwhtrhbe8fv?at=1000l3V2&ct=app_tv&itscg=30200&itsct=justwatch_tv&playableId=tvs.sbd.9001%3A1880810604",
+        "package": {
+         "shortName": "itu"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://tv.apple.com/es/movie/proyecto-salvacion/umc.cmc.7jxdlxvz304lj3iwhtrhbe8fv?at=1000l3V2&ct=app_tv&itscg=30200&itsct=justwatch_tv&playableId=tvs.sbd.9001%3A1880810604",
+        "package": {
+         "shortName": "itu"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://www.rakuten.tv/es/movies/proyecto-salvacion",
+        "package": {
+         "shortName": "wki"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://www.rakuten.tv/es/movies/proyecto-salvacion",
+        "package": {
+         "shortName": "wki"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://www.rakuten.tv/es/movies/proyecto-salvacion",
+        "package": {
+         "shortName": "wki"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.414eb1af-ee27-476c-bc46-bedd48595f59",
+        "package": {
+         "shortName": "amz"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.414eb1af-ee27-476c-bc46-bedd48595f59",
+        "package": {
+         "shortName": "amz"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.414eb1af-ee27-476c-bc46-bedd48595f59",
+        "package": {
+         "shortName": "amz"
         }
        }
       ]
@@ -54,7 +192,15 @@
      "node": {
       "content": {
        "title": "El amor de tu vida",
-       "posterUrl": "/poster/354522082/{profile}/love-of-your-life.{format}"
+       "posterUrl": "/poster/354522082/{profile}/love-of-your-life.{format}",
+       "backdrops": [
+        {
+         "backdropUrl": "/backdrop/356313617/{profile}/love-of-your-life.{format}"
+        },
+        {
+         "backdropUrl": "/backdrop/356313616/{profile}/love-of-your-life.{format}"
+        }
+       ]
       },
       "offers": [
        {
@@ -69,6 +215,161 @@
         "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.29845417-9251-4fda-917c-02e65cb4d7a0",
         "package": {
          "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.29845417-9251-4fda-917c-02e65cb4d7a0",
+        "package": {
+         "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.29845417-9251-4fda-917c-02e65cb4d7a0",
+        "package": {
+         "shortName": "pva"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.29845417-9251-4fda-917c-02e65cb4d7a0",
+        "package": {
+         "shortName": "pva"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "node": {
+      "content": {
+       "title": "Normal",
+       "posterUrl": "/poster/345751629/{profile}/normal-2026.{format}",
+       "backdrops": [
+        {
+         "backdropUrl": "/backdrop/335706878/{profile}/normal-2026.{format}"
+        }
+       ]
+      },
+      "offers": [
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "package": {
+         "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "package": {
+         "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "package": {
+         "shortName": "prv"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "package": {
+         "shortName": "pva"
+        }
+       },
+       {
+        "monetizationType": "FLATRATE",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "package": {
+         "shortName": "pva"
+        }
+       },
+       {
+        "monetizationType": "RENT",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "package": {
+         "shortName": "amz"
+        }
+       },
+       {
+        "monetizationType": "RENT",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "package": {
+         "shortName": "amz"
+        }
+       },
+       {
+        "monetizationType": "RENT",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "package": {
+         "shortName": "amz"
+        }
+       },
+       {
+        "monetizationType": "RENT",
+        "standardWebURL": "https://tv.apple.com/es/movie/normal/umc.cmc.55a77ua3g69yafu6m09v8wh1s?at=1000l3V2&ct=app_tv&itscg=30200&itsct=justwatch_tv&playableId=tvs.sbd.9001%3A6815736266",
+        "package": {
+         "shortName": "itu"
+        }
+       },
+       {
+        "monetizationType": "RENT",
+        "standardWebURL": "https://tv.apple.com/es/movie/normal/umc.cmc.55a77ua3g69yafu6m09v8wh1s?at=1000l3V2&ct=app_tv&itscg=30200&itsct=justwatch_tv&playableId=tvs.sbd.9001%3A6815736266",
+        "package": {
+         "shortName": "itu"
+        }
+       },
+       {
+        "monetizationType": "RENT",
+        "standardWebURL": "https://www.rakuten.tv/es/movies/normal",
+        "package": {
+         "shortName": "wki"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "package": {
+         "shortName": "amz"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://www.rakuten.tv/es/movies/normal",
+        "package": {
+         "shortName": "wki"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "package": {
+         "shortName": "amz"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.3008d5e5-f174-46d4-902e-8efe78ad13d7",
+        "package": {
+         "shortName": "amz"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://tv.apple.com/es/movie/normal/umc.cmc.55a77ua3g69yafu6m09v8wh1s?at=1000l3V2&ct=app_tv&itscg=30200&itsct=justwatch_tv&playableId=tvs.sbd.9001%3A6815736266",
+        "package": {
+         "shortName": "itu"
+        }
+       },
+       {
+        "monetizationType": "BUY",
+        "standardWebURL": "https://www.rakuten.tv/es/movies/normal",
+        "package": {
+         "shortName": "wki"
         }
        }
       ]
