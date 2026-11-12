@@ -247,7 +247,7 @@ public final class MainActivity extends Activity {
         for (int i = 0; i < count; i++) {
             boolean here = Platforms.installed(this, i);
             labels[i] = here ? Platforms.label(i)
-                    : Platforms.label(i) + getString(R.string.platforms_missing);
+                    : Platforms.label(i) + " " + getString(R.string.platforms_missing);
             checked[i] = saved.contains(Platforms.key(i));
         }
         new AlertDialog.Builder(this)

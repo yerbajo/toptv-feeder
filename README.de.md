@@ -84,9 +84,6 @@ Prime-Quelle: [feeder.de.md](docs/feeder.de.md) hält fest, was geprüft wurde.
 
 *Eine Synchronisierung auf der Box: vier Reihen, vierzig Karten, das Land in jedem Zeilentitel, und der Bildschirm in der Sprache des Fernsehers.*
 
-*Sechzehn Zeilen und 160 Karten auf einem Fernseher ohne eine dieser Apps: Jede Karte öffnet
-die Webseite der Plattform im Browser oder die Store-Seite der App.*
-
 ## Voraussetzungen
 
 | Punkt | Detail |
@@ -161,6 +158,10 @@ deren vier Zeilen und sonst nichts. Haken Sie einen weiteren Dienst an, sobald s
 ist, erscheinen seine Zeilen beim nächsten Sync; Zeilen eines abgewählten Dienstes werden als
 veraltet gelöscht. Ein angehakter Dienst ohne App wird als *(nicht installiert)* angezeigt und
 veröffentlicht nichts, weil es keine App zu öffnen gäbe.
+
+![Die Plattformauswahl](docs/img/app-platforms.jpg)
+
+*Plattformen: acht Dienste, die beiden installierten bereits angehakt, die übrigen als nicht installiert gekennzeichnet.*
 
 ## Land
 

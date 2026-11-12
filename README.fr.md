@@ -86,9 +86,6 @@ la source Prime : [feeder.fr.md](docs/feeder.fr.md) détaille ce qui a été vé
 
 *Une synchronisation sur le boîtier : quatre rangées, quarante cartes, le pays dans le titre de chaque rangée, et l'écran dans la langue du téléviseur.*
 
-*Seize lignes et 160 cartes sur un téléviseur qui n'a aucune des applications ajoutées : chaque
-carte ouvre la page web de la plateforme dans le navigateur, ou la page de l'application dans la boutique.*
-
 ## Prérequis
 
 | Élément | Détail |
@@ -162,6 +159,10 @@ quatre lignes et rien d'autre. Cochez un autre service une fois son application 
 ses lignes apparaîtront à la synchronisation suivante ; les lignes d'un service décoché sont
 supprimées comme obsolètes. Un service coché dont l'application manque est affiché
 *(non installée)* et ne publie rien, faute d'application à ouvrir.
+
+![Le sélecteur de plateformes](docs/img/app-platforms.jpg)
+
+*Plateformes : huit services, les deux installés déjà cochés, les autres indiqués comme non installés.*
 
 ## Pays
 

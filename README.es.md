@@ -85,9 +85,6 @@ que se comprobó.
 
 *Una sincronización en la caja: cuatro filas, cuarenta tarjetas, el país en el título de cada fila y la pantalla en el idioma del televisor.*
 
-*Dieciséis filas y 160 tarjetas en un televisor que no tiene ninguna de las apps añadidas:
-cada tarjeta abre la página web de la plataforma en el navegador o la página de la app en la tienda.*
-
 ## Requisitos
 
 | Elemento | Detalle |
@@ -160,6 +157,10 @@ Marca otro servicio cuando su app esté aquí y sus filas aparecerán en la sigu
 sincronización; las filas del servicio que desmarques se borran por obsoletas. Un servicio
 marcado cuya app no está se muestra como *(no instalada)* y no publica nada, porque no habría
 app que abrir.
+
+![El selector de plataformas](docs/img/app-platforms.jpg)
+
+*Plataformas: ocho servicios, los dos instalados ya marcados y el resto indicado como no instalado.*
 
 ## País
 

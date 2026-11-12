@@ -27,7 +27,7 @@
     <string name="country">Country: %1$s</string>
     <string name="platforms">Platforms: %1$d of %2$d</string>
     <string name="platforms_title">Rows to publish</string>
-    <string name="platforms_missing"> (not installed)</string>
+    <string name="platforms_missing">(not installed)</string>
     <string name="country_title">Country of the rankings</string>
 
     <!-- Diagnostics report. -->

@@ -80,9 +80,6 @@ records what was checked.
 
 *One sync on the box: four rows, forty cards, the country in every row title, and the screen in the TV's own language.*
 
-*Sixteen rows and 160 cards on a TV that has none of the extra platform apps: each card opens
-the platform's web page in the browser, or the app's store page.*
-
 ## Requirements
 
 | Item | Detail |
@@ -151,6 +148,10 @@ uses Netflix and Prime Video gets exactly their four rows and nothing else. Tick
 service once its app is here and its rows appear on the next sync; rows left by a service you
 untick are deleted as stale. A ticked service whose app is missing is shown as
 *(not installed)* and publishes nothing, because there would be no app to open.
+
+![The platform picker](docs/img/app-platforms.jpg)
+
+*Platforms: eight services, the two installed ones already ticked, the rest marked as not installed.*
 
 ## Country
 
