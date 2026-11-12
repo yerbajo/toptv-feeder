@@ -2,7 +2,7 @@
 
 # TV Feeder: die nationalen Toplisten auf dem TV-Startbildschirm
 
-<p align="center"><img src="docs/img/logo-toptv-feeder.png" width="780" alt="TopTV-Feeder"></p>
+<p align="center"><img src="docs/img/tv-banner.png" width="640" alt="TopTV Feeder" title="The tile the launcher draws"></p>
 
 ## Das Problem und was diese App dazu beiträgt
 
@@ -151,6 +151,16 @@ in der Activity schaltet sie weiter: die des Fernsehers → English → Español
 geschrieben, die der Bildschirm hat, wenn die Synchronisation läuft. Ausgeliefert
 werden nur Englisch und Spanisch, ein Fernseher in jeder anderen Sprache bekommt
 also Englisch.
+
+## Plattformen
+
+Die Schaltfläche **Plattformen** listet jeden unterstützten Dienst mit einem Kästchen und
+nennt, wie viele angehakt sind. Beim ersten Start sind nur die auf diesem Fernseher
+installierten Apps angehakt, ein Haushalt mit Netflix und Prime Video bekommt also genau
+deren vier Zeilen und sonst nichts. Haken Sie einen weiteren Dienst an, sobald seine App da
+ist, erscheinen seine Zeilen beim nächsten Sync; Zeilen eines abgewählten Dienstes werden als
+veraltet gelöscht. Ein angehakter Dienst ohne App wird als *(nicht installiert)* angezeigt und
+veröffentlicht nichts, weil es keine App zu öffnen gäbe.
 
 ## Land
 

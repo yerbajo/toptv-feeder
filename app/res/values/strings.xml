@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TV Feeder</string>
+    <string name="app_name">TopTV Feeder</string>
     <string name="url_hint">Optional: external top.json URL (empty = built-in sources)</string>
+    <string name="app_subtitle">The top 10s of your platforms, on the TV home screen</string>
+    <string name="section_settings">SETTINGS</string>
+    <string name="section_actions">ACTIONS</string>
+    <string name="section_report">REPORT</string>
+    <string name="url_label">External top.json (optional)</string>
+    <string name="brand_logo">TopTV Feeder</string>
     <string name="sync">Sync</string>
     <string name="diagnose">Diagnostics</string>
     <string name="target_preview">Destination: recommendation channels</string>
@@ -19,6 +25,9 @@
 
     <!-- Country of the rankings: the TV's own when supported, or one picked here. -->
     <string name="country">Country: %1$s</string>
+    <string name="platforms">Platforms: %1$d of %2$d</string>
+    <string name="platforms_title">Rows to publish</string>
+    <string name="platforms_missing"> (not installed)</string>
     <string name="country_title">Country of the rankings</string>
 
     <!-- Diagnostics report. -->

@@ -2,7 +2,7 @@ English · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](RE
 
 # TV Feeder: national top tens on the TV home screen
 
-<p align="center"><img src="docs/img/logo-toptv-feeder.png" width="780" alt="TopTV-Feeder"></p>
+<p align="center"><img src="docs/img/tv-banner.png" width="640" alt="TopTV Feeder" title="The tile the launcher draws"></p>
 
 ## The problem, and what this app does about it
 
@@ -142,6 +142,15 @@ activity cycles it: the TV's own → English → Español (`Idioma` on a Spanish
 screen). The choice is stored and survives reboots, and the sync report is written
 in the language the screen is in when the sync runs. Only English and Spanish ship,
 so a TV in any other language gets English.
+
+## Platforms
+
+The **Platforms** button lists every supported service with a checkbox, and says how many
+are ticked. The first run ticks only the apps installed on that television, so a house that
+uses Netflix and Prime Video gets exactly their four rows and nothing else. Tick another
+service once its app is here and its rows appear on the next sync; rows left by a service you
+untick are deleted as stale. A ticked service whose app is missing is shown as
+*(not installed)* and publishes nothing, because there would be no app to open.
 
 ## Country
 

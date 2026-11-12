@@ -64,8 +64,8 @@ final class TopSource {
     private static final String TUDUM_BASE = "https://www.netflix.com/tudum/top10/";
     private static final String JUSTWATCH_URL = "https://apis.justwatch.com/graphql";
     private static final String JUSTWATCH_IMAGE = "https://images.justwatch.com";
-    private static final String NETFLIX_PACKAGE = "com.netflix.ninja";
-    private static final String PRIME_PACKAGE = "com.amazon.amazonvideo.livingroom";
+    static final String NETFLIX_PACKAGE = "com.netflix.ninja";
+    static final String PRIME_PACKAGE = "com.amazon.amazonvideo.livingroom";
     // Deep-link hosts in each vendor APK's own intent filters (extra-platform-rows S5).
     static final String APPLE_PACKAGE = "com.apple.atve.androidtv.appletv";
     static final String DISNEY_PACKAGE = "com.disney.disneyplus";
@@ -263,11 +263,11 @@ final class TopSource {
      * S14 must not delete the row of a source that failed: the keep set is the
      * published rows plus these, so a partial document only removes other countries.
      */
-    static List<String> plannedIds(Installed installed, String country) {
+    static List<String> plannedIds(Installed installed, java.util.Set<String> selected, String country) {
         List<String> ids = new ArrayList<String>();
         try {
             for (Category category : categories(country, Locale.US)) {
-                if (installed.has(NETFLIX_PACKAGE)) {
+                if (wanted(installed, selected, "netflix", NETFLIX_PACKAGE)) {
                     ids.add(category.channelId);
                 }
             }
@@ -277,14 +277,14 @@ final class TopSource {
             return ids;
         }
         for (Platform platform : JUSTWATCH_PLATFORMS) {
-            if (!installed.has(platform.app)) {
+            if (!wanted(installed, selected, platform.key, platform.app)) {
                 continue;
             }
             for (String[] kind : platformRows(platform, country, Locale.US)) {
                 ids.add(kind[2]);
             }
         }
-        if (installed.has(APPLE_PACKAGE)) {
+        if (wanted(installed, selected, "apple", APPLE_PACKAGE)) {
             for (String[] kind : appleRows(country, Locale.US)) {
                 ids.add(kind[1]);
             }
@@ -295,6 +295,15 @@ final class TopSource {
     /** Whether this TV has an app, which decides if its row may exist at all (S12). */
     interface Installed {
         boolean has(String app);
+    }
+
+    /** A row is built only when the platform is ticked on the screen and installed here. */
+    private static boolean wanted(Installed installed, java.util.Set<String> selected,
+            String key, String app) {
+        if (selected != null && !selected.contains(key)) {
+            return false;
+        }
+        return installed.has(app);
     }
 
     static Category[] categories(String country, Locale locale) throws IOException {
@@ -320,7 +329,8 @@ final class TopSource {
      * travels in the notices of the rows that survived (S15). Nothing publishable
      * throws, and the caller then keeps its previous rows (S5).
      */
-    static String fetch(Installed installed, String country, String language, String target)
+    static String fetch(Installed installed, java.util.Set<String> selected, String country,
+            String language, String target)
             throws IOException, JSONException {
         Locale locale = screenLocale(language);
         String cc = country.toLowerCase(Locale.US);
@@ -330,7 +340,7 @@ final class TopSource {
         List<String> netflixNotices = new ArrayList<String>();
         // S12: this build ships to several TVs, so a platform the device does not have is
         // never fetched and no row is built for it in the first place.
-        if (installed.has(NETFLIX_PACKAGE)) {
+        if (wanted(installed, selected, "netflix", NETFLIX_PACKAGE)) {
             for (Category category : categories(country, locale)) {
                 try {
                     netflix.add(netflixRow(category, get(category.url), target));
@@ -346,7 +356,7 @@ final class TopSource {
         List<List<JSONObject>> justwatchGroups = new ArrayList<List<JSONObject>>();
         List<List<String>> justwatchNotices = new ArrayList<List<String>>();
         for (Platform platform : JUSTWATCH_PLATFORMS) {
-            if (!installed.has(platform.app)) {
+            if (!wanted(installed, selected, platform.key, platform.app)) {
                 continue;
             }
             List<JSONObject> group = new ArrayList<JSONObject>();
@@ -369,7 +379,7 @@ final class TopSource {
         }
 
         List<String> appleNotices = new ArrayList<String>();
-        List<JSONObject> apple = installed.has(APPLE_PACKAGE)
+        List<JSONObject> apple = wanted(installed, selected, "apple", APPLE_PACKAGE)
                 ? appleDocuments(country, locale, target, appleNotices)
                 : new ArrayList<JSONObject>();
         published.addAll(apple);

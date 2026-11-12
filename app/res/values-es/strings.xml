@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TV Feeder</string>
+    <string name="app_name">TopTV Feeder</string>
     <string name="url_hint">Opcional: URL externa de top.json (vacío = fuentes integradas)</string>
+    <string name="app_subtitle">Los top 10 de tus plataformas, en la pantalla de inicio</string>
+    <string name="section_settings">AJUSTES</string>
+    <string name="section_actions">ACCIONES</string>
+    <string name="section_report">INFORME</string>
+    <string name="url_label">top.json externo (opcional)</string>
+    <string name="brand_logo">TopTV Feeder</string>
     <string name="sync">Sincronizar</string>
     <string name="diagnose">Diagnóstico</string>
     <string name="target_preview">Destino: canales de recomendación</string>
@@ -19,6 +25,9 @@
 
     <!-- País de los rankings: el del televisor si está soportado, o uno elegido aquí. -->
     <string name="country">País: %1$s</string>
+    <string name="platforms">Plataformas: %1$d de %2$d</string>
+    <string name="platforms_title">Filas que publicar</string>
+    <string name="platforms_missing"> (no instalada)</string>
     <string name="country_title">País de los rankings</string>
 
     <!-- Informe de diagnóstico. -->

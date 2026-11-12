@@ -184,8 +184,8 @@ public final class Feeder {
         String body;
         try {
             body = url.isEmpty()
-                    ? TopSource.fetch(installedApps(context), country, AppLocale.code(context),
-                            target(context))
+                    ? TopSource.fetch(installedApps(context), Platforms.saved(context), country,
+                            AppLocale.code(context), target(context))
                     : download(url);
         } catch (Exception error) {
             Log.w(TAG, "refresh failed: " + error);
@@ -204,7 +204,7 @@ public final class Feeder {
         saveCache(context, body);
         // The legacy external URL carries no country, so it plans no rows of its own.
         List<String> planned = url.isEmpty()
-                ? TopSource.plannedIds(installedApps(context), country)
+                ? TopSource.plannedIds(installedApps(context), Platforms.saved(context), country)
                 : new ArrayList<String>();
         Report report = publish(context, rows, planned, source);
         if (report.ok) {
@@ -257,7 +257,8 @@ public final class Feeder {
                     + context.getString(R.string.report_no_valid_rows) + "\n"
                     + context.getString(R.string.report_previous_kept));
         }
-        Report recovered = publish(context, rows, TopSource.plannedIds(installedApps(context), Country.saved(context)),
+        Report recovered = publish(context, rows, TopSource.plannedIds(installedApps(context), Platforms.saved(context),
+                Country.saved(context)),
                 context.getString(R.string.report_source_cached, source));
         if (recovered.ok) {
             prefs(context).edit().putBoolean(PREF_PUBLISHED, true).apply();
@@ -442,7 +443,7 @@ public final class Feeder {
         for (Row row : rows) {
             // S12: only rows whose app is installed. Another TV in the house may have
             // it, so the row is skipped here and named in the report, not degraded.
-            if (!row.app.isEmpty() && !installed(context, row.app)) {
+            if (!row.app.isEmpty() && !hasApp(context, row.app)) {
                 skipped++;
                 text.append(context.getString(R.string.report_row_skipped,
                         row.channelId.isEmpty() ? "?" : row.channelId, row.app)).append('\n');
@@ -701,13 +702,13 @@ public final class Feeder {
         return new TopSource.Installed() {
             @Override
             public boolean has(String app) {
-                return installed(context, app);
+                return hasApp(context, app);
             }
         };
     }
 
     /** Whether this TV has the app, which decides if its row exists at all (S12). */
-    private static boolean installed(Context context, String app) {
+    static boolean hasApp(Context context, String app) {
         try {
             context.getPackageManager().getPackageInfo(app, 0);
             return true;

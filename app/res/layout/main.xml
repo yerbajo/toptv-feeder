@@ -1,94 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- One screen, one scroll container: D-pad focus moves through the controls and
-     scrolls this view, nothing nested traps focus. -->
+<!-- One screen, read from the sofa: brand, state, the four choices, one primary action
+     and the report. Type sizes and the accent fill exist so a D-pad focus is obvious
+     from two metres away. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#101014"
-    android:fillViewport="true"
-    android:focusable="false">
+    android:background="@color/screen_bg"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="32dp">
+        android:paddingStart="56dp"
+        android:paddingTop="36dp"
+        android:paddingEnd="56dp"
+        android:paddingBottom="40dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:contentDescription="@string/brand_logo"
+                android:src="@drawable/brand_mark" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textColor="@color/text_primary"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/app_subtitle"
+                    android:textColor="@color/text_muted"
+                    android:textSize="15sp" />
+            </LinearLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#1C1C22"
-            android:padding="16dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/card_bg"
+            android:lineSpacingMultiplier="1.2"
+            android:padding="20dp"
             android:text="@string/status_idle"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/text_primary"
             android:textSize="18sp" />
 
-        <EditText
-            android:id="@+id/url"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:hint="@string/url_hint"
-            android:importantForAutofill="no"
-            android:inputType="textUri"
-            android:singleLine="true"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#888888" />
+            android:layout_marginTop="28dp"
+            android:letterSpacing="0.12"
+            android:text="@string/section_settings"
+            android:textColor="@color/accent"
+            android:textSize="13sp"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/target"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/control_bg"
+            android:gravity="start|center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             android:text="@string/target_preview"
+            android:textColor="@color/control_text"
             android:textSize="16sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/sync"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/sync"
-                android:textSize="16sp" />
-
-            <Button
-                android:id="@+id/diagnose"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_weight="1"
-                android:text="@string/diagnose"
-                android:textSize="16sp" />
-        </LinearLayout>
 
         <Button
             android:id="@+id/language"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/control_bg"
+            android:gravity="start|center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:textColor="@color/control_text"
             android:textSize="16sp" />
 
         <Button
             android:id="@+id/country"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/control_bg"
+            android:gravity="start|center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:textColor="@color/control_text"
             android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/platforms"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/control_bg"
+            android:gravity="start|center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:textColor="@color/control_text"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="@string/url_label"
+            android:textColor="@color/text_muted"
+            android:textSize="13sp" />
+
+        <EditText
+            android:id="@+id/url"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/control_bg"
+            android:hint="@string/url_hint"
+            android:importantForAutofill="no"
+            android:inputType="textUri"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:singleLine="true"
+            android:textColor="@color/control_text"
+            android:textColorHint="@color/text_muted"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:letterSpacing="0.12"
+            android:text="@string/section_actions"
+            android:textColor="@color/accent"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/sync"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/control_primary_bg"
+            android:text="@string/sync"
+            android:textColor="@color/primary_text"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/diagnose"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/control_bg"
+            android:text="@string/diagnose"
+            android:textColor="@color/control_text"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:letterSpacing="0.12"
+            android:text="@string/section_report"
+            android:textColor="@color/accent"
+            android:textSize="13sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/report"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:textColor="#CCCCCC"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/card_bg"
+            android:fontFamily="monospace"
+            android:lineSpacingMultiplier="1.15"
+            android:padding="16dp"
+            android:textColor="@color/text_report"
             android:textIsSelectable="false"
-            android:textSize="14sp" />
+            android:textSize="13sp" />
     </LinearLayout>
 </ScrollView>

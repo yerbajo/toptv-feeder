@@ -71,30 +71,37 @@ def logo():
     draw = ImageDraw.Draw(image)
     mark(draw, 40, 60, 150)
     text = font(96)
-    draw.text((230, 120), "TV Feeder", font=text, fill=WORD, anchor="lm")
+    draw.text((230, 120), "TopTV Feeder", font=text, fill=WORD, anchor="lm")
     image.save(LOGO)
 
 
 def banner():
-    """320x180, the size a launcher draws: mark on the left, wordmark on the right."""
-    width, height = 320, 180
+    """The launcher tile: mark on the left, wordmark on the right.
+
+    Drawn at 640x360 because that is the size the front page shows, then downscaled
+    to the 320x180 the launcher asks for, so both come from the same geometry.
+    """
+    width, height = 640, 360
     image = Image.new("RGB", (width, height), BG)
     draw = ImageDraw.Draw(image)
-    mark(draw, 24, 60, 72)
-    text = font(34)
-    draw.text((112, 92), "TV Feeder", font=text, fill=WORD, anchor="lm")
+    mark(draw, 48, 120, 144)
+    # Two lines: one line of "TopTV Feeder" would run off the tile.
+    text = font(60)
+    draw.text((224, 148), "TopTV", font=text, fill=WORD, anchor="lm")
+    draw.text((224, 220), "Feeder", font=text, fill=WORD, anchor="lm")
     image.save(BANNER_DOCS)
-    image.save(BANNER_APP)
+    image.resize((320, 180), Image.LANCZOS).save(BANNER_APP)
     # Fail loudly rather than shipping a banner whose wordmark runs off the edge.
-    right = draw.textbbox((112, 92), "TV Feeder", font=text, anchor="lm")[2]
-    if right > width - 8:
-        sys.exit(f"wordmark overflows the banner: right edge {right} > {width - 8}")
+    for y, line in ((148, "TopTV"), (220, "Feeder")):
+        right = draw.textbbox((224, y), line, font=text, anchor="lm")[2]
+        if right > width - 16:
+            sys.exit(f"wordmark overflows the banner: {line} right edge {right} > {width - 16}")
 
 
 def svg():
     LOGO_SVG.write_text(
         '<svg xmlns="http://www.w3.org/2000/svg" width="960" height="240" '
-        'viewBox="0 0 960 240" role="img" aria-label="TV Feeder">\n'
+        'viewBox="0 0 960 240" role="img" aria-label="TopTV Feeder">\n'
         f'  <rect width="960" height="240" fill="{BG}"/>\n'
         '  <g transform="translate(40 60) scale(3.125)">\n'
         f'    <rect x="6" y="9" width="36" height="23" fill="{SCREEN}"/>\n'
@@ -105,7 +112,7 @@ def svg():
         f'    <rect x="15" y="36" width="18" height="3" fill="{BASE}"/>\n'
         '  </g>\n'
         f'  <text x="230" y="140" font-family="DejaVu Sans, Verdana, sans-serif" '
-        f'font-size="96" font-weight="bold" fill="{WORD}">TV Feeder</text>\n'
+        f'font-size="96" font-weight="bold" fill="{WORD}">TopTV Feeder</text>\n'
         '</svg>\n',
         encoding="utf-8",
     )

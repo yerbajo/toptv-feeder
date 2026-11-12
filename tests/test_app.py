@@ -224,9 +224,9 @@ def test_every_platform_row_is_planned():
     # S7: the keep set must hold the new rows too, or a country switch deletes them.
     assert "for (Platform platform : JUSTWATCH_PLATFORMS)" in TOP_SOURCE, (
         "plannedIds must plan every JustWatch platform")
-    assert "installed.has(APPLE_PACKAGE)" in TOP_SOURCE, (
-        "plannedIds must plan the Apple rows only where the app exists")
-    assert "if (!installed.has(platform.app))" in TOP_SOURCE, (
+    assert '"apple", APPLE_PACKAGE' in TOP_SOURCE, (
+        "plannedIds must plan the Apple rows only where the app exists and is ticked")
+    assert "!wanted(installed, selected, platform.key, platform.app)" in TOP_SOURCE, (
         "plannedIds must skip platforms this TV does not have, or stale cleanup keeps them")
     for package in ("com.apple.atve.androidtv.appletv", "com.disney.disneyplus", "com.wbd.stream",
                     "es.plus.yomvi", "com.skyshowtime.skyshowtime.google",
@@ -234,17 +234,48 @@ def test_every_platform_row_is_planned():
         assert package in TOP_SOURCE, package
 
 
+def test_every_control_shows_where_the_remote_is():
+    # A TV is used from two metres away: the focused control has to be unmistakable,
+    # so each control carries the selector instead of the platform's faint default.
+    layout = (APP / "res" / "layout" / "main.xml").read_text(encoding="utf-8")
+    controls = layout.count("<Button") + layout.count("<EditText")
+    backgrounds = (layout.count('android:background="@drawable/control_bg"')
+                   + layout.count('android:background="@drawable/control_primary_bg"'))
+    assert backgrounds == controls, "every button and field must carry a focus background"
+    labels = (layout.count('android:textColor="@color/control_text"')
+              + layout.count('android:textColor="@color/primary_text"'))
+    assert labels == controls, "the label must invert on focus, not only the fill"
+    selector = (APP / "res" / "drawable" / "control_bg.xml").read_text(encoding="utf-8")
+    assert 'android:state_focused="true"' in selector
+    assert "@color/accent" in selector, "the focused fill is the brand accent"
+
+
+def test_the_screen_offers_one_checkbox_per_platform():
+    # S12: the choice is visible and stored; the default is what is installed here.
+    platforms = (APP / "src" / "com" / "alberto" / "tvfeeder" / "Platforms.java").read_text(
+        encoding="utf-8")
+    assert 'PREF_PLATFORMS = "platforms"' in platforms
+    assert '{"netflix", "Netflix"' in platforms and '{"filmin", "Filmin"' in platforms
+    assert "return installed(context);" in platforms, (
+        "with no stored choice the selection is exactly what this TV has")
+    assert "setMultiChoiceItems" in ACTIVITY, "the user must be able to tick more than one"
+    assert "Platforms.save(MainActivity.this, keys)" in ACTIVITY
+    assert "startSync();" in ACTIVITY, "a new selection republishes at once"
+
+
 def test_absent_platforms_are_never_fetched():
     # S12: a platform this TV does not have must not even be downloaded, so no row is
     # built for it and nothing has to be thrown away afterwards.
     assert "static String fetch(Installed installed" in TOP_SOURCE, (
         "the on-box fetch must know what is installed")
-    assert "if (installed.has(NETFLIX_PACKAGE))" in TOP_SOURCE
-    assert "if (!installed.has(platform.app))" in TOP_SOURCE, (
+    assert 'wanted(installed, selected, "netflix", NETFLIX_PACKAGE)' in TOP_SOURCE
+    assert "!wanted(installed, selected, platform.key, platform.app)" in TOP_SOURCE, (
         "a JustWatch platform must be skipped before its request")
-    assert "installed.has(APPLE_PACKAGE)" in TOP_SOURCE, "the Apple charts must be gated too"
+    assert 'wanted(installed, selected, "apple", APPLE_PACKAGE)' in TOP_SOURCE, (
+        "the Apple charts must be gated too")
     assert "TopSource.fetch(installedApps(context)" in FEEDER, (
         "the sync must pass what the device actually has")
+    assert "Platforms.saved(context)" in FEEDER, "the sync must honour the ticked platforms"
 
 
 def test_a_failed_source_keeps_its_row():

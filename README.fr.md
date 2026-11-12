@@ -2,7 +2,7 @@
 
 # TV Feeder : les tops nationaux sur l'écran d'accueil du téléviseur
 
-<p align="center"><img src="docs/img/logo-toptv-feeder.png" width="780" alt="TopTV-Feeder"></p>
+<p align="center"><img src="docs/img/tv-banner.png" width="640" alt="TopTV Feeder" title="The tile the launcher draws"></p>
 
 ## Le problème, et ce que cette application y apporte
 
@@ -152,6 +152,16 @@ espagnol). Le choix est enregistré et survit aux redémarrages, et le rapport d
 synchronisation est écrit dans la langue de l'écran au moment où la synchronisation
 s'exécute. Seuls l'anglais et l'espagnol sont livrés, donc un téléviseur dans toute
 autre langue reçoit l'anglais.
+
+## Plateformes
+
+Le bouton **Plateformes** liste tous les services pris en charge avec une case à cocher et
+indique combien sont cochés. Au premier lancement, seules les applications installées sur ce
+téléviseur sont cochées : un foyer qui utilise Netflix et Prime Video obtient exactement leurs
+quatre lignes et rien d'autre. Cochez un autre service une fois son application présente et
+ses lignes apparaîtront à la synchronisation suivante ; les lignes d'un service décoché sont
+supprimées comme obsolètes. Un service coché dont l'application manque est affiché
+*(non installée)* et ne publie rien, faute d'application à ouvrir.
 
 ## Pays
 

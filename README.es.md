@@ -2,7 +2,7 @@
 
 # TV Feeder: los top nacionales en la pantalla de inicio del televisor
 
-<p align="center"><img src="docs/img/logo-toptv-feeder.png" width="780" alt="TopTV-Feeder"></p>
+<p align="center"><img src="docs/img/tv-banner.png" width="640" alt="TopTV Feeder" title="The tile the launcher draws"></p>
 
 ## El problema y lo que resuelve esta app
 
@@ -150,6 +150,16 @@ actividad (`Language` con la pantalla en inglés) lo va cambiando: el del televi
 informe de sincronización se escribe en el idioma que tiene la pantalla cuando corre
 la sincronización. Solo se publican inglés y español, así que un televisor en
 cualquier otro idioma recibe inglés.
+
+## Plataformas
+
+El botón **Plataformas** lista todos los servicios admitidos con una casilla y dice cuántas
+hay marcadas. La primera vez solo están marcadas las apps instaladas en ese televisor, así
+que una casa que usa Netflix y Prime Video recibe exactamente sus cuatro filas y nada más.
+Marca otro servicio cuando su app esté aquí y sus filas aparecerán en la siguiente
+sincronización; las filas del servicio que desmarques se borran por obsoletas. Un servicio
+marcado cuya app no está se muestra como *(no instalada)* y no publica nada, porque no habría
+app que abrir.
 
 ## País
 

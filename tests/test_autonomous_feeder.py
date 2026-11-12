@@ -193,7 +193,7 @@ def test_rows_without_their_app_are_skipped_not_faked():
     # S12: the same build ships to several TVs, and a row only exists where its app
     # is installed. No web page and no store page stand in for a missing app.
     feeder = FEEDER.read_text(encoding="utf-8")
-    assert "installed(context, row.app)" in feeder, "a row must check that its app is here"
+    assert "hasApp(context, row.app)" in feeder, "a row must check that its app is here"
     assert "report_row_skipped" in feeder, "the report must say which rows were skipped"
     assert "webIntent(" not in feeder, "a missing app must not fall back to a browser"
     assert "market://details" not in feeder, "a missing app must not fall back to the store"

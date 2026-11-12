@@ -17,6 +17,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -35,6 +38,7 @@ public final class MainActivity extends Activity {
     private Button targetView;
     private Button languageView;
     private Button countryView;
+    private Button platformsView;
     private TextView statusView;
     private TextView reportView;
     private long polledRun;
@@ -111,8 +115,17 @@ public final class MainActivity extends Activity {
             }
         });
 
+        platformsView = (Button) findViewById(R.id.platforms);
+        platformsView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pickPlatforms();
+            }
+        });
+
         countryView = (Button) findViewById(R.id.country);
         showCountry();
+        showPlatforms();
         countryView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -183,6 +196,11 @@ public final class MainActivity extends Activity {
         languageView.setText(getString(R.string.language, getString(AppLocale.label(this))));
     }
 
+    private void showPlatforms() {
+        platformsView.setText(getString(R.string.platforms,
+                Platforms.saved(this).size(), Platforms.count()));
+    }
+
     private void showCountry() {
         countryView.setText(getString(R.string.country, Country.name(this, Country.saved(this))));
     }
@@ -213,6 +231,48 @@ public final class MainActivity extends Activity {
                         startSync();
                     }
                 })
+                .show();
+    }
+
+    /**
+     * One checkbox per platform, ticked by default only where the app is installed
+     * (S12). Ticking one that is not here is allowed but publishes nothing for it, and
+     * the dialog says so, so a household never gets a row it cannot open.
+     */
+    private void pickPlatforms() {
+        final Set<String> saved = Platforms.saved(this);
+        final int count = Platforms.count();
+        final String[] labels = new String[count];
+        final boolean[] checked = new boolean[count];
+        for (int i = 0; i < count; i++) {
+            boolean here = Platforms.installed(this, i);
+            labels[i] = here ? Platforms.label(i)
+                    : Platforms.label(i) + getString(R.string.platforms_missing);
+            checked[i] = saved.contains(Platforms.key(i));
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.platforms_title)
+                .setMultiChoiceItems(labels, checked, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        checked[which] = isChecked;
+                    }
+                })
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Set<String> keys = new HashSet<String>();
+                        for (int i = 0; i < count; i++) {
+                            if (checked[i]) {
+                                keys.add(Platforms.key(i));
+                            }
+                        }
+                        Platforms.save(MainActivity.this, keys);
+                        showPlatforms();
+                        startSync();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 
