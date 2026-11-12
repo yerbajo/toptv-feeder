@@ -35,6 +35,13 @@ Each card is resolved on the device before it is published, so a tap opens
 Netflix or Prime Video instead of a dead link. A card whose link resolves to
 nothing is not published, and the sync report counts it.
 
+The Prime Video cards use a JustWatch landscape still (480 px) as the card image and
+the portrait poster (592 px) as poster art, because a 2:3 poster was being stretched
+into the 16:9 card; a title with no backdrop falls back to its poster. The Netflix
+cards are unchanged. Amazon publishes no ordered per-country Prime Video Top 10 that
+can be read anonymously, so JustWatch stays the Prime source: [feeder.md](docs/feeder.md)
+records what was checked.
+
 ## Requirements
 
 | Item | Detail |
@@ -85,6 +92,14 @@ syncs immediately:
   and preview programs, the usual recommendation surface.
 - **Destination: Watch Next** publishes into Watch Next, next to *Seguir viendo*,
   for launchers that ignore preview channels.
+
+## Language
+
+The screen follows the TV's own language, and the **Language** button on the
+activity cycles it: the TV's own → English → Español (`Idioma` on a Spanish
+screen). The choice is stored and survives reboots, and the sync report is written
+in the language the screen is in when the sync runs. Only English and Spanish ship,
+so a TV in any other language gets English.
 
 ## Verification
 

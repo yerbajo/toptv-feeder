@@ -38,6 +38,13 @@ Auswählen Netflix oder Prime Video öffnet statt eines toten Links. Eine Karte,
 deren Link sich nicht auflösen lässt, wird nicht veröffentlicht, und der
 Synchronisationsbericht zählt sie.
 
+Die Prime-Video-Karten verwenden ein Querformat-Standbild von JustWatch (480 px)
+als Kartenbild und das Hochformat-Poster (592 px) als Poster, weil ein 2:3-Poster in
+die 16:9-Karte gestreckt wurde; ein Titel ohne Standbild verwendet sein Poster. Die
+Netflix-Karten ändern sich nicht. Amazon veröffentlicht kein sortiertes
+Prime-Video-Top-10 pro Land, das anonym lesbar wäre, deshalb bleibt JustWatch die
+Prime-Quelle: [feeder.de.md](docs/feeder.de.md) hält fest, was geprüft wurde.
+
 ## Voraussetzungen
 
 | Punkt | Detail |
@@ -90,6 +97,16 @@ Zeilen veröffentlicht werden, und synchronisiert sofort:
   Vorschaukanäle und Vorschauprogramme, die übliche Empfehlungsfläche.
 - **Destination: Watch Next** veröffentlicht in Watch Next, neben *Seguir viendo*,
   für Launcher, die Vorschaukanäle ignorieren.
+
+## Sprache
+
+Der Bildschirm folgt der Sprache des Fernsehers, und die Schaltfläche **Language**
+in der Activity schaltet sie weiter: die des Fernsehers → English → Español
+(`Idioma`, sobald der Bildschirm spanisch ist). Die Wahl wird gespeichert und
+übersteht Neustarts, und der Synchronisationsbericht wird in der Sprache
+geschrieben, die der Bildschirm hat, wenn die Synchronisation läuft. Ausgeliefert
+werden nur Englisch und Spanisch, ein Fernseher in jeder anderen Sprache bekommt
+also Englisch.
 
 ## Prüfung
 

@@ -41,9 +41,27 @@ Aucun identifiant n'est nécessaire, et chaque élément porte le lien profond q
 JustWatch connaît déjà : `standardWebURL` de l'offre incluse, soit
 `https://app.primevideo.com/detail?gti=<gti>`. C'est ce lien qui ouvre le titre
 dans l'application Prime Video, donc les rangées n'ont besoin d'aucune table d'ids
-manuelle. JustWatch n'expose aucune image de fond, donc `thumb` réutilise l'affiche
-: l'application compte une vignette absente comme une illustration dégradée et
-signalerait ces rangées comme telles.
+manuelle.
+
+Une carte Prime est en 16:9 et l'affiche JustWatch est en 2:3, donc une affiche
+étirée dans la carte rendait mal. La requête demande donc aussi
+`backdrops { backdropUrl }` : `thumb`, l'image de la carte, est la première image
+fixe en paysage à 480 px, et `poster` est l'affiche en portrait à 592 px. Un titre
+sans image de fond utilise son affiche pour les deux, sa carte a donc toujours une
+illustration. Les rangées Netflix ne changent pas : leur
+`thumb` reste l'image `storyArt` de la page Tudum.
+
+Amazon ne publie aucun Top 10 Prime Video ordonné et par pays qui puisse être lu
+de façon anonyme, donc JustWatch reste la source Prime. Vérifié : la boutique
+`https://www.primevideo.com/-/es_419/storefront?tr=es` répond 200 mais affiche la
+page d'inscription (`DVSignupOffer`, customerID « unrecognised ») au lieu de
+rangées ; la page de recherche anonyme
+`https://www.primevideo.com/-/es_419/search?phrase=<title>` affiche bien des cartes
+ES, et chaque carte porte un badge « TOP 10 » et « Estuvo N semanas en el Top 10 »,
+mais aucun ordre de rangs ; le Top 10 publié sur aboutamazon.com est mondial et
+limité aux Originals, et son propre texte dit qu'il diffère de ce que l'application
+montre par pays ; et l'APK Android TV officiel installé sur le boîtier est un stub
+ignition de 3,2 Mo dont le dex n'a ni code de boutique ni code de classement.
 
 Le chemin JustWatch est couvert par des contrôles hors ligne sur des réponses
 **capturées** (réduites à trois titres et aux offres Prime), plus une assertion
@@ -125,6 +143,23 @@ Last good copy cached at 2026-11-11 18:20 (held back, not republished).
 Nothing published, previous rows left untouched (S5).
 ```
 
+## Langue
+
+L'écran suit la langue du téléviseur, et le bouton **Language** de l'activité la
+fait tourner : celle du téléviseur → English → Español. Le libellé nomme toujours
+le choix courant (`Language: the TV's own`, et `Idioma: English` une fois l'écran
+en espagnol), et les deux noms de langue ne sont pas traduits. Le choix est
+enregistré dans les préférences de l'application et survit aux redémarrages, et le
+rapport de synchronisation est écrit dans la langue de l'écran au moment où la
+synchronisation s'exécute, donc l'exécution au démarrage et la tâche quotidienne
+rapportent dans la langue que vous voyez.
+
+Seuls l'anglais et l'espagnol sont livrés, donc un téléviseur dans toute autre
+langue reçoit l'anglais. Android 9 n'a pas d'API de langue par application : le
+choix est appliqué en fournissant à l'activité et au chemin de synchronisation un
+contexte dont la configuration porte cette locale, et l'écran est reconstruit à
+l'appui du bouton.
+
 ## Pourquoi les cartes du top n'ouvraient pas leur application
 
 Un lanceur déclenche `COLUMN_INTENT_URI` ; l'ancien code publiait
@@ -205,8 +240,8 @@ est celui que l'appareil a résolu, pas une supposition.
 Contrôles hors ligne, sans réseau et sans téléviseur :
 
 ```bash
-python3 tests/test_fetch_top.py          # 10/10, the Python reference logic
-python3 tests/test_app.py                # 3/3, static guards on the app sources
+python3 tests/test_fetch_top.py          # 11/11, the Python reference logic
+python3 tests/test_app.py                # 6/6, static guards on the app sources
 python3 tools/fetch_top.py --offline tests/fixtures --out /tmp/top.json
 ```
 

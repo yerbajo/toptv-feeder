@@ -15,7 +15,9 @@ APKSIGNER="$BUILD_TOOLS/apksigner"
 APP="$ROOT/app"
 BUILD="$APP/build"
 OUT="$BUILD/toptv-feeder.apk"
-KEYSTORE="$BUILD/debug.keystore"
+# Outside $BUILD on purpose: app/build is disposable, and a rebuild with a new key
+# cannot upgrade the copy already installed on the TV.
+KEYSTORE="$ROOT/.keystore/debug.keystore"
 
 die() {
     echo "error: $*" >&2
@@ -35,7 +37,7 @@ trap 'rm -rf "$SCRATCH"' EXIT
 GEN="$SCRATCH/gen"
 CLASSES="$SCRATCH/classes"
 DEX="$SCRATCH/dex"
-mkdir -p "$BUILD" "$GEN" "$CLASSES" "$DEX"
+mkdir -p "$BUILD" "$GEN" "$CLASSES" "$DEX" "$(dirname "$KEYSTORE")"
 
 echo "==> aapt2 compile"
 "$AAPT2" compile --dir "$APP/res" -o "$SCRATCH/res.zip"

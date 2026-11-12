@@ -82,7 +82,7 @@ OK 2026-11-11 20:25 · Published 4 rows, 40 items, 0 without artwork, 0 errors
 Source: on-box sources (Netflix Tudum + JustWatch ES)
 ```
 
-![Die Activity nach einer Synchronisation](img/app-sync.jpg)
+![Die Activity nach einer Synchronisation, in der Sprache des Fernsehers](img/app-sync.jpg)
 
 Die Zahlen bedeuten:
 
@@ -95,6 +95,19 @@ Die Zahlen bedeuten:
 
 Unter der Zusammenfassung trägt jede Zeilenzeile ihre Woche und die `opens:`-URI
 ihrer ersten Karte: Das ist der String, den der Launcher auslöst.
+
+### Die Sprache des Bildschirms
+
+Die Schaltfläche **Language** zeigt `Language: the TV's own` und schaltet den
+Bildschirm weiter zwischen der Sprache des Fernsehers → English → Español. Die Wahl
+wird gespeichert, übersteht Neustarts, und der Bericht wird in der Sprache des
+Bildschirms geschrieben, ein spanischer Bildschirm gibt dieselben Zeilen also auf
+Spanisch aus. Ausgeliefert werden nur Englisch und Spanisch; ein Fernseher in jeder
+anderen Sprache bekommt Englisch.
+
+Auf einem spanischen Bildschirm heißen diese Schaltflächen `Sincronizar`,
+`Diagnóstico`, `Destino` und `Idioma`; die Schritte oben nennen deshalb die
+Schaltfläche, nicht ihre Beschriftung.
 
 ## 6. Die Zeilen anzeigen
 

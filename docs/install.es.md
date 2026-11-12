@@ -80,7 +80,7 @@ OK 2026-11-11 20:25 · Published 4 rows, 40 items, 0 without artwork, 0 errors
 Source: on-box sources (Netflix Tudum + JustWatch ES)
 ```
 
-![La actividad después de una sincronización](img/app-sync.jpg)
+![La actividad después de una sincronización, en el idioma del televisor](img/app-sync.jpg)
 
 Los números significan:
 
@@ -93,6 +93,18 @@ Los números significan:
 
 Debajo del resumen, cada línea de fila lleva su semana y la URI `opens:` de su
 primera tarjeta: esa es la cadena que lanza el lanzador.
+
+### El idioma de la pantalla
+
+El botón **Idioma** (`Language` con la pantalla en inglés) muestra la elección
+actual y va cambiando la pantalla entre el idioma del televisor → English →
+Español. La elección se guarda, sobrevive a los reinicios y el informe se escribe
+en el idioma que tiene la pantalla, así que una pantalla en español imprime las
+mismas líneas en español. Solo se publican inglés y español; un televisor en
+cualquier otro idioma recibe inglés.
+
+Con la pantalla en español esos botones se llaman `Sincronizar`, `Diagnóstico`,
+`Destino` e `Idioma`, así que los pasos de arriba nombran el botón, no su etiqueta.
 
 ## 6. Ver las filas
 

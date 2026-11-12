@@ -36,6 +36,14 @@ Cada tarjeta se resuelve en el dispositivo antes de publicarse, así que al puls
 se abre Netflix o Prime Video en lugar de un enlace muerto. Una tarjeta cuyo
 enlace no resuelve no se publica, y el informe de sincronización la cuenta.
 
+Las tarjetas de Prime Video usan una imagen de fondo apaisada de JustWatch (480 px)
+como imagen de la tarjeta y el póster vertical (592 px) como carátula, porque un
+póster 2:3 se estiraba dentro de la tarjeta 16:9; un título sin imagen de fondo usa
+su póster. Las tarjetas de Netflix no cambian. Amazon no publica ningún Top 10 de
+Prime Video ordenado y por país que se pueda leer de forma anónima, así que
+JustWatch sigue siendo la fuente de Prime: [feeder.es.md](docs/feeder.es.md) recoge lo
+que se comprobó.
+
 ## Requisitos
 
 | Elemento | Detalle |
@@ -87,6 +95,15 @@ sincroniza al instante:
   previa y programas de vista previa, la superficie de recomendaciones habitual.
 - **Destination: Watch Next** publica en Watch Next, junto a *Seguir viendo*, para
   los lanzadores que ignoran los canales de vista previa.
+
+## Idioma
+
+La pantalla sigue el idioma del propio televisor, y el botón **Idioma** de la
+actividad (`Language` con la pantalla en inglés) lo va cambiando: el del televisor
+→ English → Español. La elección se guarda y sobrevive a los reinicios, y el
+informe de sincronización se escribe en el idioma que tiene la pantalla cuando corre
+la sincronización. Solo se publican inglés y español, así que un televisor en
+cualquier otro idioma recibe inglés.
 
 ## Verificación
 

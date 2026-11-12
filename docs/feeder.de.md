@@ -40,10 +40,28 @@ Abfrage aus; das Python-Skript bildet sie nur nach.
 Es sind keine Zugangsdaten nötig, und jeder Eintrag trägt den Deep-Link, den
 JustWatch bereits kennt: `standardWebURL` des enthaltenen Angebots, also
 `https://app.primevideo.com/detail?gti=<gti>`. Das öffnet den Titel in der
-Prime-Video-App, deshalb brauchen die Zeilen keine manuelle Id-Tabelle. JustWatch
-liefert kein Hintergrundbild, deshalb verwendet `thumb` das Poster erneut: Die App
-zählt eine fehlende Vorschau als beeinträchtigte Grafik und würde die Zeilen
-entsprechend melden.
+Prime-Video-App, deshalb brauchen die Zeilen keine manuelle Id-Tabelle.
+
+Eine Prime-Karte ist 16:9 und das JustWatch-Poster ist 2:3, ein in die Karte
+gestrecktes Poster sah also falsch aus. Die Abfrage fragt deshalb zusätzlich
+`backdrops { backdropUrl }` ab: `thumb`, das Kartenbild, ist das erste
+Querformat-Standbild mit 480 px, und `poster` ist das Hochformat-Poster mit 592 px.
+Ein Titel ohne Standbild verwendet sein Poster für beides, seine Karte hat also
+weiterhin eine Grafik. Die Netflix-Zeilen ändern sich nicht: ihr `thumb` bleibt
+das `storyArt`-Bild der Tudum-Seite.
+
+Amazon veröffentlicht kein sortiertes Prime-Video-Top-10 pro Land, das anonym
+lesbar wäre, deshalb bleibt JustWatch die Prime-Quelle. Geprüft: Der Storefront
+`https://www.primevideo.com/-/es_419/storefront?tr=es` antwortet mit 200, rendert
+aber die Anmeldeseite (`DVSignupOffer`, customerID „unrecognised“) statt Zeilen;
+die anonyme Suchseite
+`https://www.primevideo.com/-/es_419/search?phrase=<title>` rendert sehr wohl
+ES-Karten, und jede Karte trägt ein „TOP 10“-Abzeichen und „Estuvo N semanas en el
+Top 10“, aber keine Rangfolge; das auf aboutamazon.com veröffentlichte Top 10 ist
+weltweit und nur Originals, und sein eigener Text sagt, dass es von dem abweicht,
+was die App pro Land zeigt; und die offizielle Android-TV-APK, die auf der Box
+installiert ist, ist ein 3,2 MB großer Ignition-Stub, dessen Dex keinen Storefront-
+und keinen Ranking-Code enthält.
 
 Der JustWatch-Pfad ist durch Offline-Prüfungen gegen **aufgezeichnete** Antworten
 abgedeckt (auf drei Titel und die Prime-Angebote gekürzt), plus eine Zusicherung,
@@ -124,6 +142,23 @@ Last good copy cached at 2026-11-11 18:20 (held back, not republished).
 Nothing published, previous rows left untouched (S5).
 ```
 
+## Sprache
+
+Der Bildschirm folgt der Sprache des Fernsehers, und die Schaltfläche **Language**
+in der Activity schaltet sie weiter: die des Fernsehers → English → Español. Die
+Beschriftung nennt immer die aktuelle Wahl (`Language: the TV's own`, und
+`Idioma: English`, sobald der Bildschirm spanisch ist), und die beiden
+Sprachnamen bleiben unübersetzt. Die Wahl wird in den Einstellungen der App
+gespeichert und übersteht Neustarts, und der Synchronisationsbericht wird in der
+Sprache geschrieben, die der Bildschirm hat, wenn die Synchronisation läuft, sodass
+Start- und Tageslauf in derselben Sprache berichten, die Sie sehen.
+
+Ausgeliefert werden nur Englisch und Spanisch, ein Fernseher in jeder anderen
+Sprache bekommt also Englisch. Android 9 hat keine API für Sprache pro App: Die
+Wahl wird angewendet, indem Activity und Synchronisationspfad ein Context übergeben
+wird, dessen Konfiguration dieses Locale trägt, und der Bildschirm wird beim
+Drücken der Schaltfläche neu aufgebaut.
+
 ## Warum die Top-Karten ihre Apps nicht öffneten
 
 Ein Launcher löst `COLUMN_INTENT_URI` aus; der alte Code veröffentlichte
@@ -203,8 +238,8 @@ veröffentlichte Intent der, den das Gerät aufgelöst hat, keine Vermutung.
 Offline-Prüfungen, ohne Netzwerk und ohne Fernseher:
 
 ```bash
-python3 tests/test_fetch_top.py          # 10/10, the Python reference logic
-python3 tests/test_app.py                # 3/3, static guards on the app sources
+python3 tests/test_fetch_top.py          # 11/11, the Python reference logic
+python3 tests/test_app.py                # 6/6, static guards on the app sources
 python3 tools/fetch_top.py --offline tests/fixtures --out /tmp/top.json
 ```
 

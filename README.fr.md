@@ -38,6 +38,13 @@ Chaque carte est résolue sur l'appareil avant d'être publiée : une sélection
 donc Netflix ou Prime Video au lieu d'un lien mort. Une carte dont le lien ne se
 résout pas n'est pas publiée, et le rapport de synchronisation la compte.
 
+Les cartes Prime Video utilisent une image fixe en paysage de JustWatch (480 px)
+comme image de carte et l'affiche en portrait (592 px) comme affiche, car une
+affiche 2:3 était étirée dans la carte 16:9 ; un titre sans image de fond utilise
+son affiche. Les cartes Netflix ne changent pas. Amazon ne publie aucun Top 10 Prime
+Video ordonné et par pays qui puisse être lu de façon anonyme, donc JustWatch reste
+la source Prime : [feeder.fr.md](docs/feeder.fr.md) détaille ce qui a été vérifié.
+
 ## Prérequis
 
 | Élément | Détail |
@@ -90,6 +97,15 @@ sont publiées et synchronise immédiatement :
   et des programmes d'aperçu, la surface de recommandations habituelle.
 - **Destination: Watch Next** publie dans Watch Next, à côté de *Seguir viendo*,
   pour les lanceurs qui ignorent les chaînes d'aperçu.
+
+## Langue
+
+L'écran suit la langue du téléviseur, et le bouton **Language** de l'activité la
+fait tourner : celle du téléviseur → English → Español (`Idioma` une fois l'écran en
+espagnol). Le choix est enregistré et survit aux redémarrages, et le rapport de
+synchronisation est écrit dans la langue de l'écran au moment où la synchronisation
+s'exécute. Seuls l'anglais et l'espagnol sont livrés, donc un téléviseur dans toute
+autre langue reçoit l'anglais.
 
 ## Vérification
 

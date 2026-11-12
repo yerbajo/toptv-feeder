@@ -38,9 +38,26 @@ No hacen falta credenciales, y cada elemento lleva el enlace profundo que JustWa
 ya conoce: `standardWebURL` de la oferta incluida, que es
 `https://app.primevideo.com/detail?gti=<gti>`. Eso es lo que abre el título en la
 app de Prime Video, así que las filas no necesitan ninguna tabla de ids manual.
-JustWatch no expone ninguna imagen de fondo, así que `thumb` reutiliza el póster: la
-app cuenta un thumb ausente como carátula degradada y reportaría esas filas como
-tales.
+
+Una tarjeta de Prime es 16:9 y el póster de JustWatch es 2:3, así que el póster
+estirado dentro de la tarjeta se veía mal. Por eso la consulta pide también
+`backdrops { backdropUrl }`: `thumb`, la imagen de la tarjeta, es la primera imagen
+de fondo apaisada a 480 px, y `poster` es la carátula vertical a 592 px. Un título
+sin imagen de fondo usa su póster para las dos cosas, así que su tarjeta sigue
+teniendo carátula. Las filas de Netflix no cambian: su `thumb` sigue siendo
+la imagen `storyArt` de la página de Tudum.
+
+Amazon no publica ningún Top 10 de Prime Video ordenado y por país que se pueda
+leer de forma anónima, así que JustWatch sigue siendo la fuente de Prime.
+Comprobado: la tienda `https://www.primevideo.com/-/es_419/storefront?tr=es`
+responde 200 pero dibuja la página de registro (`DVSignupOffer`, customerID
+"unrecognised") en lugar de filas; la página de búsqueda anónima
+`https://www.primevideo.com/-/es_419/search?phrase=<title>` sí dibuja tarjetas de
+ES, y cada tarjeta lleva una insignia "TOP 10" y "Estuvo N semanas en el Top 10",
+pero ningún orden de puestos; el Top 10 que publica aboutamazon.com es mundial y
+solo de Originals, y su propio texto dice que no coincide con lo que la app muestra
+por país; y el APK oficial de Android TV instalado en la caja es un stub de
+ignition de 3,2 MB cuya dex no tiene código de tienda ni de ranking.
 
 La ruta de JustWatch está cubierta por comprobaciones sin conexión contra respuestas
 **capturadas** (recortadas a tres títulos y a las ofertas de Prime), más una
@@ -120,6 +137,22 @@ Last good copy cached at 2026-11-11 18:20 (held back, not republished).
 Nothing published, previous rows left untouched (S5).
 ```
 
+## Idioma
+
+La pantalla sigue el idioma del propio televisor, y el botón **Idioma** de la
+actividad (`Language` con la pantalla en inglés) lo va cambiando: el del televisor
+→ English → Español. La etiqueta nombra siempre la elección actual (`Idioma: el
+del televisor`, `Idioma: English`, `Idioma: Español`), y los dos nombres de idioma
+no se traducen. La elección se guarda en las preferencias de la app y sobrevive a
+los reinicios, y el informe de sincronización se escribe en el idioma que tiene la
+pantalla cuando corre la sincronización, así que el arranque y la tarea diaria
+informan en el idioma que ves.
+
+Solo se publican inglés y español, así que un televisor en cualquier otro idioma
+recibe inglés. Android 9 no tiene API de idioma por app: la elección se aplica
+entregando a la actividad y a la ruta de sincronización un contexto cuya
+configuración lleva ese locale, y la pantalla se reconstruye al pulsar el botón.
+
 ## Por qué las tarjetas del top no abrían sus apps
 
 Un lanzador lanza `COLUMN_INTENT_URI`; el código anterior publicaba
@@ -197,8 +230,8 @@ es el que resolvió el dispositivo, no una suposición.
 Comprobaciones sin conexión, sin red y sin necesidad de televisor:
 
 ```bash
-python3 tests/test_fetch_top.py          # 10/10, the Python reference logic
-python3 tests/test_app.py                # 3/3, static guards on the app sources
+python3 tests/test_fetch_top.py          # 11/11, the Python reference logic
+python3 tests/test_app.py                # 6/6, static guards on the app sources
 python3 tools/fetch_top.py --offline tests/fixtures --out /tmp/top.json
 ```
 

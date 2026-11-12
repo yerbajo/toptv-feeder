@@ -80,7 +80,7 @@ OK 2026-11-11 20:25 · Published 4 rows, 40 items, 0 without artwork, 0 errors
 Source: on-box sources (Netflix Tudum + JustWatch ES)
 ```
 
-![The activity after a sync](img/app-sync.jpg)
+![The activity after a sync, in the TV's language](img/app-sync.jpg)
 
 The numbers mean:
 
@@ -93,6 +93,17 @@ The numbers mean:
 
 Under the summary, each row line carries its week and the `opens:` URI of its first
 card: that is the string the launcher fires.
+
+### The screen language
+
+The **Language** button reads `Language: the TV's own` and cycles the screen through
+the TV's own language → English → Español. The choice is stored, survives reboots,
+and the report is written in the language the screen is in, so a Spanish screen
+prints the same lines in Spanish. Only English and Spanish ship; a TV set to any
+other language gets English.
+
+On a Spanish screen the buttons read `Sincronizar`, `Diagnóstico`, `Destino` and
+`Idioma`, so the steps above name the button, not its label.
 
 ## 6. Show the rows
 

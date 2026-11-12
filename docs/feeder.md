@@ -36,9 +36,26 @@ the list. The app runs exactly that query; the Python script only mirrors it.
 No credentials are needed, and each item carries the deep link JustWatch already
 knows: `standardWebURL` for the included offer, which is
 `https://app.primevideo.com/detail?gti=<gti>`. That is what opens the title in
-the Prime Video app, so the rows need no manual id table. JustWatch exposes no
-backdrop, so `thumb` reuses the poster: the app counts a missing thumb as
-degraded artwork and would report the rows as such.
+the Prime Video app, so the rows need no manual id table.
+
+A Prime card is 16:9 and the JustWatch poster is 2:3, so a poster stretched into
+the card read wrong. The query therefore asks for `backdrops { backdropUrl }` as
+well: `thumb`, the card image, is the first landscape still at 480 px, and
+`poster` is the portrait poster at 592 px. A title with no backdrop uses its
+poster for both, so its card still has artwork. The Netflix
+rows are unchanged: their `thumb` is still the `storyArt` image from the Tudum
+page.
+
+Amazon publishes no ordered per-country Prime Video Top 10 that can be read
+anonymously, so JustWatch stays the Prime source. Checked: the storefront
+`https://www.primevideo.com/-/es_419/storefront?tr=es` answers 200 but renders the
+signup page (`DVSignupOffer`, customerID "unrecognised") instead of rows; the
+anonymous search page `https://www.primevideo.com/-/es_419/search?phrase=<title>`
+does render ES cards, and each card carries a "TOP 10" badge plus "Estuvo N
+semanas en el Top 10", but no rank order; the Top 10 published on aboutamazon.com
+is worldwide and Originals-only, and its own text says it differs from what the
+app shows per country; and the official Android TV APK installed on the box is a
+3.2 MB ignition stub whose dex has no storefront or ranking code.
 
 The JustWatch path is covered by offline checks against **captured** responses
 (trimmed to three titles and to the Prime offers), plus an assertion that a
@@ -115,6 +132,21 @@ Last good copy cached at 2026-11-11 18:20 (held back, not republished).
 Nothing published, previous rows left untouched (S5).
 ```
 
+## Language
+
+The screen follows the TV's own language, and the **Language** button on the
+activity cycles it: the TV's own → English → Español. The label always names the
+current choice (`Language: the TV's own`, and `Idioma: English` once the screen is
+Spanish), and the two language names stay untranslated. The choice is stored in
+the app's preferences and survives reboots, and the sync report is written in the
+language the screen is in when the sync runs, so the boot and the daily job report
+in the language you see.
+
+Only English and Spanish ship, so a TV set to any other language gets English.
+Android 9 has no per-app language API: the choice is applied by handing the
+activity and the sync path a context whose configuration carries that locale, and
+the screen is rebuilt when the button is pressed.
+
 ## Why the top cards did not open their apps
 
 A launcher fires `COLUMN_INTENT_URI`; the old code published
@@ -189,8 +221,8 @@ the one the device resolved, not a guess.
 Offline checks, no network and no TV needed:
 
 ```bash
-python3 tests/test_fetch_top.py          # 10/10, the Python reference logic
-python3 tests/test_app.py                # 3/3, static guards on the app sources
+python3 tests/test_fetch_top.py          # 11/11, the Python reference logic
+python3 tests/test_app.py                # 6/6, static guards on the app sources
 python3 tools/fetch_top.py --offline tests/fixtures --out /tmp/top.json
 ```
 
