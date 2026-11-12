@@ -17,6 +17,10 @@
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
 
+    <!-- Country of the rankings: the TV's own when supported, or one picked here. -->
+    <string name="country">Country: %1$s</string>
+    <string name="country_title">Country of the rankings</string>
+
     <!-- Diagnostics report. -->
     <string name="diagnostics_header">Provider rows (package_name | display_name | type | searchable)</string>
     <string name="diagnostics_rows">%1$d rows; this app is %2$s</string>
@@ -29,11 +33,12 @@
     <string name="report_published">Published %1$d rows, %2$d items, %3$d without artwork, %4$d errors</string>
     <string name="report_nothing">Nothing published: %1$d rows, %2$d items, %3$d without artwork, %4$d errors (previous rows left untouched, S5)</string>
     <string name="report_source">Source: %1$s</string>
+    <string name="report_stale_rows">%1$d rows removed because the new document no longer has them</string>
     <string name="report_source_cached">%1$s (cached copy)</string>
     <string name="report_items_count">%1$d items</string>
     <string name="report_week">week %1$s</string>
     <string name="report_no_artwork">%1$d without artwork</string>
-    <string name="report_no_link">%1$d without a resolvable link</string>
+    <string name="report_no_link">%1$d without any destination</string>
     <string name="report_opens">  opens: %1$s</string>
     <string name="report_notice">  notice: %1$s</string>
     <string name="report_row_error">- error %1$s: %2$s</string>

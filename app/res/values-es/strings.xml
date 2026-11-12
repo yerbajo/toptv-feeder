@@ -17,6 +17,10 @@
     <string name="language_en">English</string>
     <string name="language_es">Español</string>
 
+    <!-- País de los rankings: el del televisor si está soportado, o uno elegido aquí. -->
+    <string name="country">País: %1$s</string>
+    <string name="country_title">País de los rankings</string>
+
     <!-- Informe de diagnóstico. -->
     <string name="diagnostics_header">Filas del proveedor (package_name | display_name | type | searchable)</string>
     <string name="diagnostics_rows">%1$d filas; esta app es %2$s</string>
@@ -29,11 +33,12 @@
     <string name="report_published">Publicadas %1$d filas, %2$d elementos, %3$d sin carátula, %4$d errores</string>
     <string name="report_nothing">No se publicó nada: %1$d filas, %2$d elementos, %3$d sin carátula, %4$d errores (las filas anteriores siguen intactas, S5)</string>
     <string name="report_source">Origen: %1$s</string>
+    <string name="report_stale_rows">%1$d filas eliminadas porque el nuevo documento ya no las tiene</string>
     <string name="report_source_cached">%1$s (copia guardada)</string>
     <string name="report_items_count">%1$d elementos</string>
     <string name="report_week">semana %1$s</string>
     <string name="report_no_artwork">%1$d sin carátula</string>
-    <string name="report_no_link">%1$d sin enlace que abra la app</string>
+    <string name="report_no_link">%1$d sin ningún destino</string>
     <string name="report_opens">  abre: %1$s</string>
     <string name="report_notice">  aviso: %1$s</string>
     <string name="report_row_error">- error %1$s: %2$s</string>

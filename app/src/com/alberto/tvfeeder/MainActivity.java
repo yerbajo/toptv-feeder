@@ -1,8 +1,10 @@
 package com.alberto.tvfeeder;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -32,6 +34,7 @@ public final class MainActivity extends Activity {
     private EditText urlView;
     private Button targetView;
     private Button languageView;
+    private Button countryView;
     private TextView statusView;
     private TextView reportView;
     private long polledRun;
@@ -108,6 +111,15 @@ public final class MainActivity extends Activity {
             }
         });
 
+        countryView = (Button) findViewById(R.id.country);
+        showCountry();
+        countryView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pickCountry();
+            }
+        });
+
         SyncJobService.schedulePeriodic(this);
         refresh();
         if (!hasListings()) {
@@ -169,6 +181,39 @@ public final class MainActivity extends Activity {
 
     private void showLanguage() {
         languageView.setText(getString(R.string.language, getString(AppLocale.label(this))));
+    }
+
+    private void showCountry() {
+        countryView.setText(getString(R.string.country, Country.name(this, Country.saved(this))));
+    }
+
+    /**
+     * The countries the sources answer for, named in the screen's language (S11).
+     * Picking one stores it and republishes the rows for it (S14).
+     */
+    private void pickCountry() {
+        final String[] codes = TopSource.countries();
+        String[] names = new String[codes.length];
+        String current = Country.saved(this);
+        int checked = 0;
+        for (int i = 0; i < codes.length; i++) {
+            names[i] = Country.name(this, codes[i]);
+            if (codes[i].equals(current)) {
+                checked = i;
+            }
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.country_title)
+                .setSingleChoiceItems(names, checked, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Country.save(MainActivity.this, codes[which]);
+                        showCountry();
+                        dialog.dismiss();
+                        startSync();
+                    }
+                })
+                .show();
     }
 
     private void refresh() {

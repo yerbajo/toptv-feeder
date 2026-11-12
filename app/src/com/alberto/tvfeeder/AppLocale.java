@@ -44,6 +44,19 @@ final class AppLocale {
         return context.createConfigurationContext(config);
     }
 
+    /** The locale the screen is drawn in: the chosen language, else the TV's own. */
+    static Locale screenLocale(Context context) {
+        // getLocales() (API 24) is what carries the createConfigurationContext
+        // locale above; minSdk is 28.
+        return context.getResources().getConfiguration().getLocales().get(0);
+    }
+
+    /** Its language code, which the country names and the sources follow (S13). */
+    static String code(Context context) {
+        String code = screenLocale(context).getLanguage();
+        return code.isEmpty() ? "en" : code;
+    }
+
     /** Stores the next language in the cycle so the screen can rebuild with it. */
     static void next(Context context) {
         String current = saved(context);

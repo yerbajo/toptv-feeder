@@ -27,29 +27,64 @@ import java.util.TimeZone;
  *
  * Same evidence as tools/fetch_top.py, the reference implementation, minus the
  * 33 MB world-wide TSV it also uses: that body cannot be held on a TV box, and the
- * two Spain tab pages already carry rank, week, title, artwork and video id (S4).
- * JustWatch popularity supplies the Prime Video rows. All or nothing: a source
- * that fails throws, so the caller keeps its last valid rows instead of half a
- * document.
+ * country's two Tudum tab pages already carry rank, week, title, artwork and video
+ * id (S4). JustWatch popularity supplies the Prime Video rows. Both sources follow
+ * the selected country (S13) and neither takes the other down (S15).
  */
 final class TopSource {
 
-    static final String LABEL = "on-box sources (Netflix Tudum + JustWatch ES)";
+    /** The country used when the device's is not in the table (S11). */
+    static final String DEFAULT_COUNTRY = "ES";
 
+    /**
+     * ISO code and the Tudum slug of every country the sources answer for (S11).
+     * Each pair returned 200 with a payload this parser reads, and JustWatch takes
+     * the ISO code itself.
+     */
+    private static final String[][] COUNTRIES = {
+            {"ES", "spain"},
+            {"DE", "germany"},
+            {"NL", "netherlands"},
+            {"FR", "france"},
+            {"IT", "italy"},
+            {"GB", "united-kingdom"},
+            {"US", "united-states"},
+            {"PT", "portugal"},
+            {"BE", "belgium"},
+            {"AT", "austria"},
+            {"CH", "switzerland"},
+            {"SE", "sweden"},
+            {"PL", "poland"},
+            {"IE", "ireland"},
+            {"MX", "mexico"},
+            {"BR", "brazil"},
+            {"AR", "argentina"},
+    };
+
+    private static final String TUDUM_BASE = "https://www.netflix.com/tudum/top10/";
     private static final String JUSTWATCH_URL = "https://apis.justwatch.com/graphql";
     private static final String JUSTWATCH_IMAGE = "https://images.justwatch.com";
-    private static final String COUNTRY = "ES";
     private static final String NETFLIX_PACKAGE = "com.netflix.ninja";
     private static final String PRIME_PACKAGE = "com.amazon.amazonvideo.livingroom";
+    // Deep-link hosts in each vendor APK's own intent filters (extra-platform-rows S5).
+    static final String APPLE_PACKAGE = "com.apple.atve.androidtv.appletv";
+    static final String DISNEY_PACKAGE = "com.disney.disneyplus";
+    static final String MAX_PACKAGE = "com.wbd.stream";
+    static final String MOVISTAR_PACKAGE = "es.plus.yomvi";
+    static final String SKYSHOWTIME_PACKAGE = "com.skyshowtime.skyshowtime.google";
+    static final String FILMIN_PACKAGE = "com.filmin.androidtv";
+    private static final String APPLE_BASE = "https://tv.apple.com/";
+    private static final String[] APPLE_CHARTS = {
+            "uts.col.ChartsShows.tvs.sbd.4000", "uts.col.ChartsMovies"};
     private static final int MAX_ITEMS = 10;
-    /** The Spain pages are ~200 KB; this only guards a runaway response. */
+    /** A Top 10 page is ~200 KB; this only guards a runaway response. */
     private static final int MAX_BODY_BYTES = 1024 * 1024;
     private static final int CONNECT_TIMEOUT_MS = 20000;
     private static final int READ_TIMEOUT_MS = 20000;
     /** netflix.com resets library HTTP clients that look like a script (see fetch_top.py). */
     private static final String USER_AGENT = "Mozilla/5.0 (Linux; Android 9) AppleWebKit/537.36"
             + " (KHTML, like Gecko) Chrome/126.0 Safari/537.36";
-    // Same query as tools/fetch_top.py: ES popularity, Prime Video included with the
+    // Same query as tools/fetch_top.py: popularity, Prime Video included with the
     // subscription ("prv" in the filter), rentals excluded (amz/amp would leak them).
     private static final String JUSTWATCH_QUERY =
             "query P($country: Country!, $language: Language!, $first: Int!, $objectType: ObjectType!) {"
@@ -60,8 +95,44 @@ final class TopSource {
                     + " offers(country: $country, platform: WEB)"
                     + " { monetizationType standardWebURL package { shortName } } } } } }";
 
+    /**
+     * One JustWatch-backed platform: its label, the app its cards open, the package
+     * filter its query asks for, and the packages whose link may be published.
+     */
+    static final class Platform {
+        final String key;
+        final String label;
+        final String app;
+        final String[] queryPackages;
+        final String[] linkPackages;
+
+        Platform(String key, String label, String app, String[] queryPackages, String[] linkPackages) {
+            this.key = key;
+            this.label = label;
+            this.app = app;
+            this.queryPackages = queryPackages;
+            this.linkPackages = linkPackages;
+        }
+    }
+
+    /** Same short names as tools/fetch_top.py; Prime keeps its ad tier as a link only. */
+    static final Platform[] JUSTWATCH_PLATFORMS = {
+            new Platform("prime", "Prime Video", PRIME_PACKAGE,
+                    new String[] {"prv"}, new String[] {"prv", "pva"}),
+            new Platform("disney", "Disney+", DISNEY_PACKAGE,
+                    new String[] {"dnp"}, new String[] {"dnp"}),
+            new Platform("max", "Max", MAX_PACKAGE,
+                    new String[] {"mxx"}, new String[] {"mxx"}),
+            new Platform("movistar", "Movistar+", MOVISTAR_PACKAGE,
+                    new String[] {"mvs"}, new String[] {"mvs"}),
+            new Platform("skyshowtime", "SkyShowtime", SKYSHOWTIME_PACKAGE,
+                    new String[] {"sst"}, new String[] {"sst"}),
+            new Platform("filmin", "Filmin", FILMIN_PACKAGE,
+                    new String[] {"fil"}, new String[] {"fil"}),
+    };
+
     /** One Netflix row: the selector label, the page tab label, the page URL and its identity. */
-    private static final class Category {
+    static final class Category {
         final String label;
         final String page;
         final String url;
@@ -76,13 +147,6 @@ final class TopSource {
             this.title = title;
         }
     }
-
-    private static final Category[] NETFLIX = {
-            new Category("TV", "SERIES", "https://www.netflix.com/tudum/top10/spain/tv",
-                    "netflix-top-series-es", "Netflix · Top series España"),
-            new Category("Films", "MOVIES", "https://www.netflix.com/tudum/top10/spain",
-                    "netflix-top-films-es", "Netflix · Top películas España"),
-    };
 
     /** One ranked card of a page, every field taken from the same entity (S4). */
     private static final class Card {
@@ -105,33 +169,223 @@ final class TopSource {
         }
     };
 
+    /** The store's own ordinal is the ranking, not the order the shelf arrives in. */
+    private static final Comparator<JSONObject> BY_ORDINAL = new Comparator<JSONObject>() {
+        @Override
+        public int compare(JSONObject left, JSONObject right) {
+            return Integer.valueOf(left.optInt("ordinal", 0))
+                    .compareTo(right.optInt("ordinal", 0));
+        }
+    };
+
     private TopSource() {
     }
 
-    /** Fetches every source and returns the finished document, or throws (S2). */
-    static String fetch(String target) throws IOException, JSONException {
-        String tv = get(NETFLIX[0].url);
-        String films = get(NETFLIX[1].url);
-        JSONArray rows = netflixRows(tv, films, target);
-        JSONObject show = new JSONObject(post(request("SHOW")));
-        rows.put(justwatchRow("prime-top-series-es", "Prime Video · Top series España",
-                "SHOW", show, target));
-        JSONObject movie = new JSONObject(post(request("MOVIE")));
-        rows.put(justwatchRow("prime-top-films-es", "Prime Video · Top películas España",
-                "MOVIE", movie, target));
-        return document(rows);
+    /** The supported ISO codes, in the order the country button lists them (S11). */
+    static String[] countries() {
+        String[] codes = new String[COUNTRIES.length];
+        for (int i = 0; i < COUNTRIES.length; i++) {
+            codes[i] = COUNTRIES[i][0];
+        }
+        return codes;
+    }
+
+    /** Whether the table has this country, so every source can answer it. */
+    static boolean supported(String country) {
+        return country != null && !country.isEmpty() && !slug(country).isEmpty();
+    }
+
+    /** The country's Tudum slug, or "" when the table does not have it. */
+    static String slug(String country) {
+        for (String[] entry : COUNTRIES) {
+            if (entry[0].equals(country)) {
+                return entry[1];
+            }
+        }
+        return "";
+    }
+
+    /** The country's name in the screen's language; never a hardcoded string (S12). */
+    static String countryName(String country, Locale locale) {
+        String name = new Locale("", country).getDisplayCountry(locale);
+        return name.isEmpty() ? country : name;
+    }
+
+    /** The locale the country names are drawn in; an empty code follows English. */
+    static Locale screenLocale(String language) {
+        if (language == null || language.isEmpty()) {
+            return Locale.ENGLISH;
+        }
+        return Locale.forLanguageTag(language);
+    }
+
+    /** The report's source line, which names the country the box fetched (S11). */
+    static String label(String country) {
+        return "on-box sources (Netflix Tudum + JustWatch + Apple chart " + country + ")";
+    }
+
+    /** The two Netflix rows of one country, in document order (S12, S13). */
+    /** The two Prime rows: object type, row title and channel id. */
+    static String[][] primeRows(String country, Locale locale) {
+        String cc = country.toLowerCase(Locale.US);
+        String name = countryName(country, locale);
+        return new String[][] {
+                {"SHOW", "Prime Video · Top series " + name, "prime-top-series-" + cc},
+                {"MOVIE", "Prime Video · Top películas " + name, "prime-top-films-" + cc},
+        };
+    }
+
+    /** The two rows of one JustWatch platform: object type, row title and channel id. */
+    static String[][] platformRows(Platform platform, String country, Locale locale) {
+        String cc = country.toLowerCase(Locale.US);
+        String name = countryName(country, locale);
+        return new String[][] {
+                {"SHOW", platform.label + " · Top series " + name,
+                        platform.key + "-top-series-" + cc},
+                {"MOVIE", platform.label + " · Top películas " + name,
+                        platform.key + "-top-films-" + cc},
+        };
+    }
+
+    /** The two Apple rows: row title and channel id, in document order. */
+    static String[][] appleRows(String country, Locale locale) {
+        String cc = country.toLowerCase(Locale.US);
+        String name = countryName(country, locale);
+        return new String[][] {
+                {"Apple TV · Top series " + name, "apple-top-series-" + cc},
+                {"Apple TV · Top películas " + name, "apple-top-films-" + cc},
+        };
+    }
+
+    /** The Apple row identities, which plannedIds needs without a locale. */
+    private static String[][] appleRowIds(String country) {
+        return appleRows(country, Locale.US);
     }
 
     /**
-     * The two Netflix rows in document order, from the two page bodies. A page that
-     * does not parse throws here, so no partial document ever reaches the cache (S4).
+     * Every row id this app intends to publish for the country, published or not.
+     *
+     * S14 must not delete the row of a source that failed: the keep set is the
+     * published rows plus these, so a partial document only removes other countries.
      */
-    static JSONArray netflixRows(String tvHtml, String filmsHtml, String target)
-            throws JSONException {
+    static List<String> plannedIds(String country) {
+        List<String> ids = new ArrayList<String>();
+        try {
+            for (Category category : categories(country, Locale.US)) {
+                ids.add(category.channelId);
+            }
+        } catch (IOException error) {
+            // Country.saved only ever returns a supported country, so this cannot
+            // happen; planning nothing is the safe reading if it ever does.
+            return ids;
+        }
+        for (Platform platform : JUSTWATCH_PLATFORMS) {
+            for (String[] kind : platformRows(platform, country, Locale.US)) {
+                ids.add(kind[2]);
+            }
+        }
+        for (String[] kind : appleRowIds(country)) {
+            ids.add(kind[1]);
+        }
+        return ids;
+    }
+
+    static Category[] categories(String country, Locale locale) throws IOException {
+        String slug = slug(country);
+        if (slug.isEmpty()) {
+            throw new IOException("unsupported country " + country);
+        }
+        String cc = country.toLowerCase(Locale.US);
+        String name = countryName(country, locale);
+        String base = TUDUM_BASE + slug;
+        return new Category[] {
+                new Category("TV", "SERIES", base + "/tv",
+                        "netflix-top-series-" + cc, "Netflix · Top series " + name),
+                new Category("Films", "MOVIES", base,
+                        "netflix-top-films-" + cc, "Netflix · Top películas " + name),
+        };
+    }
+
+    /**
+     * Fetches every source of one country and returns the document (S2, S13).
+     *
+     * A source that fails or returns nothing only costs its own rows: the reason
+     * travels in the notices of the rows that survived (S15). Nothing publishable
+     * throws, and the caller then keeps its previous rows (S5).
+     */
+    static String fetch(String country, String language, String target)
+            throws IOException, JSONException {
+        Locale locale = screenLocale(language);
+        String cc = country.toLowerCase(Locale.US);
+        String name = countryName(country, locale);
+
+        List<JSONObject> netflix = new ArrayList<JSONObject>();
+        List<String> netflixNotices = new ArrayList<String>();
+        for (Category category : categories(country, locale)) {
+            try {
+                netflix.add(netflixRow(category, get(category.url), target));
+            } catch (IOException error) {
+                netflixNotices.add(category.title + ": " + error.getMessage());
+            } catch (JSONException error) {
+                netflixNotices.add(category.title + ": " + error.getMessage());
+            }
+        }
+
+        List<JSONObject> published = new ArrayList<JSONObject>(netflix);
+        List<List<JSONObject>> justwatchGroups = new ArrayList<List<JSONObject>>();
+        List<List<String>> justwatchNotices = new ArrayList<List<String>>();
+        for (Platform platform : JUSTWATCH_PLATFORMS) {
+            List<JSONObject> group = new ArrayList<JSONObject>();
+            List<String> notices = new ArrayList<String>();
+            for (String[] kind : platformRows(platform, country, locale)) {
+                try {
+                    JSONObject response = new JSONObject(post(request(kind[0], country, language,
+                            platform.queryPackages)));
+                    group.add(justwatchRow(kind[2], kind[1], kind[0], response, target, country,
+                            platform.app, platform.linkPackages, platform.label));
+                } catch (IOException error) {
+                    notices.add(kind[1] + ": " + error.getMessage());
+                } catch (JSONException error) {
+                    notices.add(kind[1] + ": " + error.getMessage());
+                }
+            }
+            justwatchGroups.add(group);
+            justwatchNotices.add(notices);
+            published.addAll(group);
+        }
+
+        List<String> appleNotices = new ArrayList<String>();
+        List<JSONObject> apple = appleDocuments(country, locale, target, appleNotices);
+        published.addAll(apple);
+
+        if (published.isEmpty()) {
+            throw new IOException("no source produced rows: " + netflixNotices + " "
+                    + justwatchNotices + " " + appleNotices);
+        }
+        // A source that produced nothing says why on the rows that survived; one that
+        // still produced rows carries its own reason there.
+        addNotices(netflix.isEmpty() ? published : netflix, netflixNotices);
+        for (int i = 0; i < justwatchGroups.size(); i++) {
+            List<JSONObject> group = justwatchGroups.get(i);
+            addNotices(group.isEmpty() ? published : group, justwatchNotices.get(i));
+        }
+        addNotices(apple.isEmpty() ? published : apple, appleNotices);
+
         JSONArray rows = new JSONArray();
-        rows.put(netflixRow(NETFLIX[0].label, tvHtml, target));
-        rows.put(netflixRow(NETFLIX[1].label, filmsHtml, target));
-        return rows;
+        for (JSONObject row : published) {
+            rows.put(row);
+        }
+        return document(rows);
+    }
+
+    /** Appends the reasons of a failed source to the rows that survived it (S15). */
+    private static void addNotices(List<JSONObject> rows, List<String> notices)
+            throws JSONException {
+        for (String notice : notices) {
+            for (JSONObject row : rows) {
+                row.getJSONArray("notices").put(notice);
+            }
+        }
     }
 
     static String document(JSONArray rows) throws JSONException {
@@ -156,8 +410,8 @@ final class TopSource {
      * One Netflix row from its tab page alone (S4): rank, week, title, artwork and
      * watch id come from one entity, so a lagging page cannot mismatch them.
      */
-    static JSONObject netflixRow(String label, String html, String target) throws JSONException {
-        Category category = category(label);
+    static JSONObject netflixRow(Category category, String html, String target)
+            throws JSONException {
         Page page = page(html, category.page);
         if (page.cards.isEmpty()) {
             throw new JSONException("Top 10 page " + category.page + " has no ranked items");
@@ -186,16 +440,7 @@ final class TopSource {
         return row;
     }
 
-    private static Category category(String label) throws JSONException {
-        for (Category category : NETFLIX) {
-            if (category.label.equals(label)) {
-                return category;
-            }
-        }
-        throw new JSONException("unknown Netflix row " + label);
-    }
-
-    /** The ranked cards of one Spain tab page, ordered by rank and capped at ten. */
+    /** The ranked cards of one tab page, ordered by rank and capped at ten. */
     private static Page page(String html, String pageCategory) throws JSONException {
         Page page = new Page();
         Map<Integer, Card> byRank = new LinkedHashMap<Integer, Card>();
@@ -349,7 +594,14 @@ final class TopSource {
     // ---------------------------------------------------------------- justwatch
 
     static JSONObject justwatchRow(String channelId, String title, String objectType,
-            JSONObject response, String target) throws JSONException {
+            JSONObject response, String target, String country) throws JSONException {
+        return justwatchRow(channelId, title, objectType, response, target, country,
+                PRIME_PACKAGE, new String[] {"prv", "pva"}, "Prime Video");
+    }
+
+    static JSONObject justwatchRow(String channelId, String title, String objectType,
+            JSONObject response, String target, String country, String app,
+            String[] linkPackages, String label) throws JSONException {
         JSONArray items = new JSONArray();
         JSONObject popular = response.optJSONObject("data");
         popular = popular == null ? null : popular.optJSONObject("popularTitles");
@@ -373,16 +625,17 @@ final class TopSource {
             // card image; without one the poster doubles as the thumb.
             String thumb = firstBackdrop(content.optJSONArray("backdrops"));
             item.put("thumb", thumb.isEmpty() ? poster : thumb);
-            item.put("link", primeLink(node.optJSONArray("offers")));
+            item.put("link", platformLink(node.optJSONArray("offers"), linkPackages));
             items.put(item);
         }
         if (items.length() == 0) {
-            throw new JSONException("JustWatch returned no " + objectType + " for Prime Video " + COUNTRY);
+            throw new JSONException("JustWatch returned no " + objectType
+                    + " for " + label + " " + country);
         }
         JSONObject row = new JSONObject();
         row.put("channelId", channelId);
         row.put("title", title);
-        row.put("app", PRIME_PACKAGE);
+        row.put("app", app);
         row.put("source", "justwatch-popularity");
         row.put("target", target);
         row.put("items", items);
@@ -410,8 +663,13 @@ final class TopSource {
         return "";
     }
 
-    /** The Prime deep link carried by an included offer, or "" when none has one. */
-    private static String primeLink(JSONArray offers) {
+    /**
+     * The platform's own deep link from an included offer, or "" when none has one.
+     *
+     * A title can carry several providers (Max listings also carry Movistar+ URLs),
+     * so the offer is chosen by its package and never by its position (S6).
+     */
+    private static String platformLink(JSONArray offers, String[] packages) {
         for (int i = 0; offers != null && i < offers.length(); i++) {
             JSONObject offer = offers.optJSONObject(i);
             if (offer == null) {
@@ -420,8 +678,8 @@ final class TopSource {
             JSONObject included = offer.optJSONObject("package");
             String packageName = included == null ? "" : included.optString("shortName", "");
             String url = offer.optString("standardWebURL", "");
-            boolean subscription = "prv".equals(packageName) || "pva".equals(packageName);
-            if (subscription && "FLATRATE".equals(offer.optString("monetizationType", ""))
+            if (matches(packageName, packages)
+                    && "FLATRATE".equals(offer.optString("monetizationType", ""))
                     && !url.isEmpty()) {
                 return url;
             }
@@ -429,16 +687,164 @@ final class TopSource {
         return "";
     }
 
-    private static JSONObject request(String objectType) throws JSONException {
+    /** The Prime deep link carried by an included offer, or "" when none has one. */
+    private static String primeLink(JSONArray offers) {
+        return platformLink(offers, new String[] {"prv", "pva"});
+    }
+
+    /** The package list as GraphQL expects it: ["prv"] or ["dnp", "pva"]. */
+    private static String quoted(String[] packages) {
+        StringBuilder text = new StringBuilder("[");
+        for (int i = 0; packages != null && i < packages.length; i++) {
+            if (i > 0) {
+                text.append(", ");
+            }
+            text.append('"').append(packages[i]).append('"');
+        }
+        return text.append(']').toString();
+    }
+
+    private static boolean matches(String packageName, String[] packages) {
+        for (int i = 0; packages != null && i < packages.length; i++) {
+            if (packages[i].equals(packageName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static JSONObject request(String objectType, String country, String language,
+            String[] packages) throws JSONException {
         JSONObject variables = new JSONObject();
-        variables.put("country", COUNTRY);
-        variables.put("language", "es");
+        variables.put("country", country);
+        variables.put("language", language);
         variables.put("first", MAX_ITEMS);
         variables.put("objectType", objectType);
         JSONObject payload = new JSONObject();
-        payload.put("query", JUSTWATCH_QUERY);
+        payload.put("query", JUSTWATCH_QUERY.replace("[\"prv\"]", quoted(packages)));
         payload.put("variables", variables);
         return payload;
+    }
+
+    // ---------------------------------------------------------------- apple charts
+
+    /** The two chart URLs of one storefront (extra-platform-rows S6). */
+    static String[] appleChartUrls(String country) {
+        String base = APPLE_BASE + country.toLowerCase(Locale.US) + "/collection/most-popular/";
+        return new String[] {base + APPLE_CHARTS[0], base + APPLE_CHARTS[1]};
+    }
+
+    /** mzstatic artwork template -> poster URL, or "" when there is no template. */
+    static String applePoster(String template) {
+        if (template == null || template.isEmpty()) {
+            return "";
+        }
+        return template.replace("{w}x{h}", "592x888").replace("{f}", "jpg");
+    }
+
+    /** Items of one Apple chart, ordered by the store's own ordinal (S6). */
+    static JSONArray parseAppleChart(String html, int maxItems) throws JSONException {
+        String payload = serializedServerData(html);
+        if (payload.isEmpty()) {
+            throw new JSONException("no serialized-server-data in the page");
+        }
+        JSONObject root = new JSONObject(payload);
+        List<JSONObject> chart = new ArrayList<JSONObject>();
+        collectChart(root, chart);
+        Collections.sort(chart, BY_ORDINAL);
+        JSONArray items = new JSONArray();
+        for (JSONObject entry : chart) {
+            if (items.length() >= maxItems) {
+                break;
+            }
+            JSONObject action = entry.optJSONObject("contextAction");
+            String title = entry.optString("title", entry.optString("ariaLabel", "")).trim();
+            String link = action == null ? "" : action.optString("url", "").trim();
+            if (title.isEmpty() || link.isEmpty()) {
+                continue;
+            }
+            JSONObject art = entry.optJSONObject("artwork");
+            String poster = applePoster(art == null ? "" : art.optString("template", ""));
+            JSONObject item = new JSONObject();
+            item.put("title", title);
+            item.put("poster", poster);
+            item.put("thumb", poster);
+            item.put("link", link);
+            items.put(item);
+        }
+        return items;
+    }
+
+    /** One Apple row from a chart page, so the same shape is built offline in tests. */
+    static JSONObject appleRow(String channelId, String title, String html, String target)
+            throws JSONException {
+        JSONArray items = parseAppleChart(html, MAX_ITEMS);
+        if (items.length() == 0) {
+            throw new JSONException("Apple returned no chart");
+        }
+        JSONObject row = new JSONObject();
+        row.put("channelId", channelId);
+        row.put("title", title);
+        row.put("app", APPLE_PACKAGE);
+        row.put("source", "apple-chart");
+        row.put("target", target);
+        row.put("items", items);
+        row.put("notices", new JSONArray());
+        return row;
+    }
+
+    /** The two Apple rows of one country, each chart degrading on its own (S9). */
+    static List<JSONObject> appleDocuments(String country, Locale locale, String target,
+            List<String> notices) throws JSONException {
+        List<JSONObject> rows = new ArrayList<JSONObject>();
+        String[][] identities = appleRows(country, locale);
+        String[] urls = appleChartUrls(country);
+        for (int i = 0; i < identities.length; i++) {
+            try {
+                rows.add(appleRow(identities[i][1], identities[i][0], get(urls[i]), target));
+            } catch (IOException error) {
+                notices.add(identities[i][0] + ": " + error.getMessage());
+            } catch (JSONException error) {
+                notices.add(identities[i][0] + ": " + error.getMessage());
+            }
+        }
+        return rows;
+    }
+
+    /** The JSON script tag Apple server-renders its chart into, or "". */
+    private static String serializedServerData(String html) {
+        if (html == null) {
+            return "";
+        }
+        String marker = "id=\"serialized-server-data\"";
+        int at = html.indexOf(marker);
+        if (at < 0) {
+            return "";
+        }
+        int start = html.indexOf('>', at);
+        int end = html.indexOf("</script>", start < 0 ? 0 : start);
+        if (start < 0 || end < 0) {
+            return "";
+        }
+        return html.substring(start + 1, end).trim();
+    }
+
+    private static void collectChart(Object node, List<JSONObject> chart) {
+        if (node instanceof JSONObject) {
+            JSONObject object = (JSONObject) node;
+            if ("OrdinalChartLockup".equals(object.optString("$kind", ""))) {
+                chart.add(object);
+            }
+            Iterator<String> keys = object.keys();
+            while (keys.hasNext()) {
+                collectChart(object.opt(keys.next()), chart);
+            }
+        } else if (node instanceof JSONArray) {
+            JSONArray array = (JSONArray) node;
+            for (int i = 0; i < array.length(); i++) {
+                collectChart(array.opt(i), chart);
+            }
+        }
     }
 
     // ---------------------------------------------------------------- transport

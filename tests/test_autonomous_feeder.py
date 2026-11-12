@@ -72,9 +72,17 @@ def reference_rows():
     def fetch_json(payload):
         return movie if payload["variables"]["objectType"] == "MOVIE" else show
 
-    prime, notices = ft.build_prime_rows(fetch_json=fetch_json)
-    assert notices == [], notices
-    return ft.apply_target(ft.build_netflix_rows(dataset, pages) + prime, "preview")
+    rows = ft.build_netflix_rows(dataset, pages)
+    for platform in ft.JUSTWATCH_PLATFORMS:
+        platform_rows, notices = ft.build_justwatch_rows(platform, fetch_json=fetch_json)
+        assert notices == [], (platform, notices)
+        rows.extend(platform_rows)
+    apple = ft.build_apple_rows(
+        {"TV": (FIX / "apple-es-tv.html").read_text(encoding="utf-8"),
+         "Films": (FIX / "apple-es.html").read_text(encoding="utf-8")},
+        country="ES", language="es")
+    rows.extend(apple)
+    return ft.apply_target(rows, "preview")
 
 
 def expected_rows():
@@ -151,11 +159,22 @@ def test_app_never_downloads_the_worldwide_dataset():
     assert "tudum/top10/data" not in source, "only the two Spain pages are fetched on the box"
 
 
-def test_a_page_without_payload_aborts_the_whole_sync():
+def test_a_page_without_payload_aborts_its_own_row():
+    # S15 replaced the all-or-nothing document: a broken page now only costs its row,
+    # which is what TopSource.fetch catches.
     done, _ = harness()
     assert "ok   a page without payload aborts the row" in done.stdout, done.stdout + done.stderr
-    assert "ok   one bad page aborts both Netflix rows" in done.stdout, done.stdout + done.stderr
+    assert "ok   the failure stays on its own row" in done.stdout, done.stdout + done.stderr
 
+
+def test_the_country_drives_the_rows_and_the_sources():
+    # S11-S13: ids, titles and page URLs follow the selected country.
+    done, _ = harness()
+    assert "ok   the country table decides the ids, titles and page urls" in done.stdout, (
+        done.stdout + done.stderr)
+    assert "ok   names come from the locale, not a hardcoded string" in done.stdout, (
+        done.stdout + done.stderr)
+    assert "ok   an unsupported country has no category" in done.stdout, done.stdout + done.stderr
 
 def test_feeder_defaults_to_the_on_box_sources():
     feeder = FEEDER.read_text(encoding="utf-8")
@@ -168,6 +187,21 @@ def test_feeder_defaults_to_the_on_box_sources():
 def test_activity_accepts_an_empty_url():
     activity = ACTIVITY.read_text(encoding="utf-8")
     assert "url_missing" not in activity, "an empty URL now means the built-in sources (S2)"
+
+
+def test_a_card_without_the_app_still_opens_something():
+    # The same build runs on TVs that lack a given app, so a card falls back to the
+    # platform's web page and then to its store page instead of disappearing.
+    feeder = FEEDER.read_text(encoding="utf-8")
+    order = [feeder.index("intent.setPackage(row.app);"),
+             feeder.index("manager.getLaunchIntentForPackage(row.app)"),
+             feeder.index("webIntent(manager, item.link)"),
+             feeder.index("storeIntent(manager, row.app)")]
+    assert order == sorted(order), "the fallbacks must keep their order"
+    assert "market://details?id=" in feeder, "a TV without the app must be able to install it"
+    assert "intent.setPackage(browser)" in feeder, (
+        "the web fallback must be pinned to the browser, or a loose filter claims it"
+    )
 
 
 def test_card_intent_code_paths():

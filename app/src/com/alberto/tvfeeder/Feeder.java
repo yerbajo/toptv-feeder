@@ -29,8 +29,10 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Publishes the ranked rows of top.json into the TV provider.
@@ -53,11 +55,10 @@ public final class Feeder {
     static final String PREF_RUN = "run";
     static final String TARGET_PREVIEW = "preview";
     static final String TARGET_WATCH_NEXT = "watch_next";
-    static final String SOURCE = TopSource.LABEL;
 
     private static final String PREF_PUBLISHED = "published";
     private static final String PREF_AUTONOMOUS = "autonomous";
-    private static final String CACHE_FILE = "last_good.json";
+    private static final String CACHE_PREFIX = "last_good-";
     private static final String CARD_TITLE = "title";
     private static final int CONNECT_TIMEOUT_MS = 20000;
     private static final int READ_TIMEOUT_MS = 20000;
@@ -131,7 +132,7 @@ public final class Feeder {
         }
 
         String key() {
-            return "tvfeeder:" + channelId;
+            return channelKey(channelId);
         }
 
         /** Null when the row can be published, otherwise why it cannot (S5). */
@@ -159,6 +160,11 @@ public final class Feeder {
         }
     }
 
+    /** The channel description this app stores for a row; stable across versions. */
+    static String channelKey(String channelId) {
+        return "tvfeeder:" + channelId;
+    }
+
     private Feeder() {
     }
 
@@ -172,11 +178,14 @@ public final class Feeder {
      * clear and re-publish the same rows.
      */
     static synchronized Report sync(Context context) {
+        String country = Country.saved(context);
         String url = configuredUrl(context);
-        String source = url.isEmpty() ? SOURCE : url;
+        String source = url.isEmpty() ? TopSource.label(country) : url;
         String body;
         try {
-            body = url.isEmpty() ? TopSource.fetch(target(context)) : download(url);
+            body = url.isEmpty()
+                    ? TopSource.fetch(country, AppLocale.code(context), target(context))
+                    : download(url);
         } catch (Exception error) {
             Log.w(TAG, "refresh failed: " + error);
             return offline(context, source, error);
@@ -192,7 +201,11 @@ public final class Feeder {
         // Only a document that parsed is a good copy, and it replaces the previous
         // one in a single rename, so a half-written file can never be published.
         saveCache(context, body);
-        Report report = publish(context, rows, source);
+        // The legacy external URL carries no country, so it plans no rows of its own.
+        List<String> planned = url.isEmpty()
+                ? TopSource.plannedIds(country)
+                : new ArrayList<String>();
+        Report report = publish(context, rows, planned, source);
         if (report.ok) {
             prefs(context).edit().putBoolean(PREF_PUBLISHED, true).apply();
         }
@@ -243,7 +256,7 @@ public final class Feeder {
                     + context.getString(R.string.report_no_valid_rows) + "\n"
                     + context.getString(R.string.report_previous_kept));
         }
-        Report recovered = publish(context, rows,
+        Report recovered = publish(context, rows, TopSource.plannedIds(Country.saved(context)),
                 context.getString(R.string.report_source_cached, source));
         if (recovered.ok) {
             prefs(context).edit().putBoolean(PREF_PUBLISHED, true).apply();
@@ -285,9 +298,14 @@ public final class Feeder {
     }
 
     /** Replaces the last good copy in one rename, so no reader sees half a file. */
+    /** The cache belongs to one country, so a switch never republishes the old one. */
+    private static String cacheName(Context context) {
+        return CACHE_PREFIX + Country.saved(context).toLowerCase(Locale.US) + ".json";
+    }
+
     private static void saveCache(Context context, String body) {
-        File target = new File(context.getFilesDir(), CACHE_FILE);
-        File temp = new File(context.getFilesDir(), CACHE_FILE + ".tmp");
+        File target = new File(context.getFilesDir(), cacheName(context));
+        File temp = new File(target.getPath() + ".tmp");
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(temp);
@@ -313,7 +331,7 @@ public final class Feeder {
     }
 
     private static String readCache(Context context) {
-        File cache = new File(context.getFilesDir(), CACHE_FILE);
+        File cache = new File(context.getFilesDir(), cacheName(context));
         if (!cache.exists()) {
             return null;
         }
@@ -336,7 +354,7 @@ public final class Feeder {
     }
 
     private static String cacheNote(Context context) {
-        File cache = new File(context.getFilesDir(), CACHE_FILE);
+        File cache = new File(context.getFilesDir(), cacheName(context));
         if (!cache.exists()) {
             return context.getString(R.string.report_no_cache);
         }
@@ -408,7 +426,8 @@ public final class Feeder {
 
     // ----------------------------------------------------------------- publish
 
-    private static Report publish(Context context, List<Row> rows, String source) {
+    private static Report publish(Context context, List<Row> rows, List<String> planned,
+            String source) {
         ContentResolver resolver = context.getContentResolver();
         String pkg = context.getPackageName();
         StringBuilder text = new StringBuilder();
@@ -436,6 +455,16 @@ public final class Feeder {
                     + text + context.getString(R.string.report_previous_kept));
         }
         clearOwnPrograms(resolver);
+        // S14: only rows the app no longer intends survive the delete, so a source
+        // that failed this run keeps the row it published last time (S5). The keep
+        // set holds channel keys, the same shape the provider stores as description.
+        Set<String> keep = new HashSet<String>();
+        for (String channelId : planned) {
+            keep.add(channelKey(channelId));
+        }
+        for (Row row : publishable) {
+            keep.add(row.key());
+        }
 
         for (Row row : publishable) {
             String label = row.channelId + " (" + row.target + ")";
@@ -476,9 +505,18 @@ public final class Feeder {
         }
 
         boolean ok = published > 0;
+        int stale = 0;
+        // S14 covers a country or language switch. A document from the legacy
+        // external URL plans no rows, so pruning would delete rows it omits.
+        if (published > 0 && !planned.isEmpty()) {
+            stale = deleteStaleChannels(context, pkg, keep);
+        }
         String head = context.getString(
                 ok ? R.string.report_published : R.string.report_nothing,
                 published, items, degraded, errors);
+        if (stale > 0) {
+            head = head + "\n" + context.getString(R.string.report_stale_rows, stale);
+        }
         return new Report(ok, head + "\n" + context.getString(R.string.report_source, source)
                 + "\n" + text);
     }
@@ -547,6 +585,41 @@ public final class Feeder {
     private static void clearOwnPrograms(ContentResolver resolver) {
         resolver.delete(TvContract.PreviewPrograms.CONTENT_URI, null, null);
         resolver.delete(TvContract.WatchNextPrograms.CONTENT_URI, null, null);
+    }
+
+    /**
+     * Removes this package's channels that the new document does not contain (S14), so
+     * switching country never leaves an empty row on the launcher.
+     *
+     * Ownership is re-checked here: with READ_TV_LISTINGS granted the provider also
+     * returns other packages' searchable channels, and those are never touched. The
+     * description holds the row key, which is what the document knows its rows by.
+     */
+    private static int deleteStaleChannels(Context context, String pkg, Set<String> keep) {
+        ContentResolver resolver = context.getContentResolver();
+        List<Long> stale = new ArrayList<Long>();
+        Cursor cursor = resolver.query(TvContract.Channels.CONTENT_URI,
+                new String[] {TvContract.Channels._ID, COL_PACKAGE_NAME, COL_DESCRIPTION},
+                null, null, null);
+        if (cursor == null) {
+            return 0;
+        }
+        try {
+            while (cursor.moveToNext()) {
+                if (!pkg.equals(cursor.getString(1)) || keep.contains(cursor.getString(2))) {
+                    continue;
+                }
+                stale.add(cursor.getLong(0));
+            }
+        } finally {
+            cursor.close();
+        }
+        for (Long id : stale) {
+            // By id and without a selection, for the reason given in clearOwnPrograms.
+            resolver.delete(ContentUris.withAppendedId(TvContract.Channels.CONTENT_URI, id),
+                    null, null);
+        }
+        return stale.size();
     }
 
     /** Creates or updates this package's channel for the row and returns its id. */
@@ -618,8 +691,10 @@ public final class Feeder {
      * The intent URI for one card, resolved on this device (S3a).
      *
      * A package-pinned data intent only resolves when the app registers a filter for
-     * that exact link, which is why those cards stayed dead. The deep link is tried
-     * first, the app launch intent second, and null means this card opens nothing.
+     * that exact link. The deep link is tried first, the app launch intent second, and
+     * because the same build runs on TVs that do not have every app, a card then falls
+     * back to the platform's web page in a browser and finally to the app's store page,
+     * so a row still shows its ranking. Null means this card opens nothing at all.
      */
     private static String cardIntent(Context context, Row row, Item item) {
         PackageManager manager = context.getPackageManager();
@@ -635,12 +710,64 @@ public final class Feeder {
             intent = resolved(manager, manager.getLaunchIntentForPackage(row.app));
         }
         if (intent == null) {
+            intent = webIntent(manager, item.link);
+        }
+        if (intent == null && !row.app.isEmpty()) {
+            intent = storeIntent(manager, row.app);
+        }
+        if (intent == null) {
             return null;
         }
         // A launcher keys a card on this URI: the title keeps ten cards of one app
         // apart, and the target app ignores the extra.
         intent.putExtra(CARD_TITLE, item.title);
         return intent.toUri(Intent.URI_INTENT_SCHEME);
+    }
+
+    /**
+     * The card's page in a browser, pinned to the browser itself.
+     *
+     * Unpinned it would be claimed by any installed app with a loose https filter
+     * (SkyShowtime registers https with no host), so the browser is chosen first and
+     * the intent is pinned to it.
+     */
+    private static Intent webIntent(PackageManager manager, String link) {
+        if (link.isEmpty() || !link.startsWith("http")) {
+            return null;
+        }
+        String browser = browserPackage(manager);
+        if (browser.isEmpty()) {
+            return null;
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+        intent.setPackage(browser);
+        return resolved(manager, intent);
+    }
+
+    /** The app's store page, so a TV without the app can install it. */
+    private static Intent storeIntent(PackageManager manager, String app) {
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("market://details?id=" + app));
+        intent = resolved(manager, intent);
+        if (intent != null) {
+            return intent;
+        }
+        return webIntent(manager, "https://play.google.com/store/apps/details?id=" + app);
+    }
+
+    /** The first package that handles a plain http page, which is a browser. */
+    private static String browserPackage(PackageManager manager) {
+        Intent probe = new Intent(Intent.ACTION_VIEW, Uri.parse("http://example.com"));
+        List<ResolveInfo> handlers = manager.queryIntentActivities(probe, PackageManager.MATCH_DEFAULT_ONLY);
+        if (handlers == null) {
+            return "";
+        }
+        for (ResolveInfo handler : handlers) {
+            if (handler.activityInfo != null && handler.activityInfo.packageName != null) {
+                return handler.activityInfo.packageName;
+            }
+        }
+        return "";
     }
 
     /** The same intent pointed at the activity that handles it, if any. */
