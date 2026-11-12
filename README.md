@@ -2,6 +2,8 @@ English · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](RE
 
 # TV Feeder: national top tens on the TV home screen
 
+<p align="center"><img src="docs/img/logo-toptv-feeder.png" width="780" alt="TopTV-Feeder"></p>
+
 ## The problem, and what this app does about it
 
 Neither Netflix nor Prime Video publishes a per-country Top 10 to the Android TV
@@ -41,6 +43,16 @@ into the 16:9 card; a title with no backdrop falls back to its poster. The Netfl
 cards are unchanged. Amazon publishes no ordered per-country Prime Video Top 10 that
 can be read anonymously, so JustWatch stays the Prime source: [feeder.md](docs/feeder.md)
 records what was checked.
+
+## What it looks like
+
+![The Prime Video and Netflix top rows on the TV home screen](docs/img/launcher-rows.jpg)
+
+*Projectivy drawing the **Prime Video · Top series España** row over the Netflix rows: the app published the ranking, the artwork and the tap target.*
+
+![The app after one sync](docs/img/app-sync.jpg)
+
+*One sync on the box: four rows, forty cards, and the screen in the TV's own language.*
 
 ## Requirements
 

@@ -2,6 +2,8 @@
 
 # TV Feeder: die nationalen Toplisten auf dem TV-Startbildschirm
 
+<p align="center"><img src="docs/img/logo-toptv-feeder.png" width="780" alt="TopTV-Feeder"></p>
+
 ## Das Problem und was diese App dazu beiträgt
 
 Weder Netflix noch Prime Video veröffentlichen ein Länder-Top-10 im TV Provider
@@ -44,6 +46,16 @@ die 16:9-Karte gestreckt wurde; ein Titel ohne Standbild verwendet sein Poster. 
 Netflix-Karten ändern sich nicht. Amazon veröffentlicht kein sortiertes
 Prime-Video-Top-10 pro Land, das anonym lesbar wäre, deshalb bleibt JustWatch die
 Prime-Quelle: [feeder.de.md](docs/feeder.de.md) hält fest, was geprüft wurde.
+
+## So sieht es aus
+
+![Die Top-Reihen von Prime Video und Netflix auf dem Fernseher](docs/img/launcher-rows.jpg)
+
+*Projectivy zeigt die Reihe **Prime Video · Top series España** über den Netflix-Reihen: die App hat Rangliste, Artwork und Ziel jeder Karte veröffentlicht.*
+
+![Die App nach einer Synchronisierung](docs/img/app-sync.jpg)
+
+*Eine Synchronisierung auf der Box: vier Reihen, vierzig Karten, und der Bildschirm in der Sprache des Fernsehers.*
 
 ## Voraussetzungen
 
